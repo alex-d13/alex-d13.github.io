@@ -128,9 +128,11 @@
   <span class='va'>annotation</span>,
   <span class='va'>seurat_obj</span>,
   <span class='va'>name</span>,
-  count_type <span class='op'>=</span> <span class='st'>"TPM"</span>,
+  count_type <span class='op'>=</span> <span class='st'>"raw"</span>,
   spike_in_col <span class='op'>=</span> <span class='cn'>NULL</span>,
-  filter_genes <span class='op'>=</span> <span class='cn'>F</span>
+  filter_genes <span class='op'>=</span> <span class='cn'>T</span>,
+  variance_cutoff <span class='op'>=</span> <span class='fl'>0</span>,
+  type_abundance_cutoff <span class='op'>=</span> <span class='fl'>0</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -158,7 +160,15 @@
     </tr>
     <tr>
       <th>filter_genes</th>
-      <td><p>boolean, if zero expression genes will be included in dataset or not</p></td>
+      <td><p>boolean, if TRUE, removes all genes with 0 expression over all samples &amp; genes with variance below <code>variance_cutoff</code></p></td>
+    </tr>
+    <tr>
+      <th>variance_cutoff</th>
+      <td><p>numeric, is only applied if <code>filter_genes</code> is TRUE: removes all genes with variance below the chosen cutoff</p></td>
+    </tr>
+    <tr>
+      <th>type_abundance_cutoff</th>
+      <td><p>numeric, remove all cells, whose cell-type appears less then the given value. This removes low abundant cell-types</p></td>
     </tr>
     </table>
 

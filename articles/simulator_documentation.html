@@ -89,7 +89,7 @@
 <p>To install the package, run this: (Since it is a private repository, you currently need an authentification token for this repository.)</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"omnideconv/simulator"</span><span class="op">)</span> <span class="co">#add auth=XXX to download from private repository</span></code></pre></div>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"omnideconv/simulator"</span><span class="op">)</span> <span class="co">#add auth_token=XXX to download from private repository</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">simulator</span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-datatable.com">data.table</a></span><span class="op">)</span>
@@ -121,14 +121,9 @@ The goal of this simulator is to create benchmark datasets, where pseudo bulk sa
 <p>This package can simulate samples from local or public data. We will start with the public data integration, since it requires mostly no manual download of datasets. As a public database, sfaira <span class="citation">(<a href="#ref-Fischer2020" role="doc-biblioref">Fischer et al. 2020</a>)</span> is used, which is a dataset and model repository for single-cell RNA-sequencing data. It gives access to about 233 datasets from human and mouse with more than 3 million cells in total. You can browse them interactively here: <a href="https://theislab.github.io/sfaira-portal/Datasets">https://theislab.github.io/sfaira-portal/Datasets</a>. Note that only annotated datasets will be downloaded!<br>
 In order to use this database, we first need to install it. We recommend to use <a href="https://docs.conda.io/projects/conda/en/latest/index.html">conda</a> to create a new environment and install sfaira into this directory. This ensures that no other packages interfere with the installation.<br><em>Note:</em> currently the simulator seems to work only with the develop version of sfaira.<br>
 A recommended step by step installation would look like this:</p>
-<pre><code>conda create --name sfaira python=3.9
+<pre><code>conda create --name sfaira python=3.9 pip
 conda activate sfaira
-conda install pip
-git clone https://github.com/theislab/sfaira.git
-cd sfaira
-git checkout dev
-git pull
-/path/to/conda/envs/sfaira/bin/pip install -e . #this ensures that the correct pip is used</code></pre>
+/path/to/conda/envs/sfaira/bin/pip install git+https://github.com/theislab/sfaira.git@dev #this ensures that the correct pip is used</code></pre>
 <p>Watch out that you are using pip inside of the new environment, not the global pip!<br></p>
 <p>You do not need to activate the new conda environment each time in order to use it in the R package.<br>
 To setup sfaira inside of the R package use this command:</p>
@@ -157,7 +152,8 @@ The <code>name</code> parameter is used later on to give each sample a unique na
 <span class="co">#&gt; [1] "Removing datasets without cell-type annotation..."</span>
 <span class="co">#&gt; [1] "Downloading datasets..."</span>
 <span class="co">#&gt; [1] "Streamlining features &amp; meta-data..."</span>
-<span class="co">#&gt; [1] "Using rownames for cell-IDs."</span></code></pre></div>
+<span class="co">#&gt; [1] "Using rownames for cell-IDs."</span>
+<span class="co">#&gt; [1] "Filtering genes..."</span></code></pre></div>
 <p>Currently there are two datasets in sfaira from human pancreas, which have cell-type annotation. The package will download them for you automatically and merge them together into a single expression matrix and a streamlined annotation table, which we can use for our simulation.<br>
 It can happen, that some datasets from sfaira are not (yet) ready for the automatic download, an error message will then appear in R, telling you which file to download and where to put it.<br></p>
 <p>If you wish to see all datasets which are included in sfaira you can use the following command:</p>
@@ -254,7 +250,8 @@ You can also control the number of cells per sample by using the <code>total_rea
 
 <span class="va">dataset_file</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
                                    count_matrix <span class="op">=</span> <span class="va">counts</span>,
-                                   name<span class="op">=</span><span class="st">"Maynard"</span><span class="op">)</span></code></pre></div>
+                                   name<span class="op">=</span><span class="st">"Maynard"</span><span class="op">)</span>
+<span class="co">#&gt; [1] "Filtering genes..."</span></code></pre></div>
 <ul>
 <li>Using a h5ad expression data &amp; annotation file</li>
 </ul>
@@ -268,7 +265,8 @@ You can also control the number of cells per sample by using the <code>total_rea
 
 <span class="va">dataset_h5ad</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_h5ad.html">dataset_h5ad</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
                                         h5ad_file <span class="op">=</span> <span class="va">counts</span>, 
-                                        name <span class="op">=</span> <span class="st">"Travaglini"</span><span class="op">)</span></code></pre></div>
+                                        name <span class="op">=</span> <span class="st">"Travaglini"</span><span class="op">)</span>
+<span class="co">#&gt; [1] "Filtering genes..."</span></code></pre></div>
 <ul>
 <li>Using a Seurat Object and annotation file</li>
 </ul>
@@ -290,7 +288,8 @@ You can also control the number of cells per sample by using the <code>total_rea
 
 <span class="va">dataset_seurat</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_seurat.html">dataset_seurat</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
                                             seurat_obj <span class="op">=</span> <span class="va">seurat_obj</span>,
-                                            name<span class="op">=</span><span class="st">"TabulaMuris_Bladder"</span><span class="op">)</span></code></pre></div>
+                                            name<span class="op">=</span><span class="st">"TabulaMuris_Bladder"</span><span class="op">)</span>
+<span class="co">#&gt; [1] "Filtering genes..."</span></code></pre></div>
 <p><strong>Important:</strong> the annotation dataframe you are feeding into the dataset, needs these two columns: <code>ID</code> for the cell ID, which has to be in common with the cell IDs in the expression matrix and <code>cell_type</code>, which gives the cell-type for a cell.<br></p>
 </div>
 <div id="simulate-using-a-whitelist-and-blacklist-of-cell-types" class="section level2">

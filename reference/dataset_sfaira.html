@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>constructor for a dataset using a sfaira ID — dataset_sfaira • simulator</title>
+<title>Build a dataset using a single sfaira entry ID — dataset_sfaira • simulator</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="constructor for a dataset using a sfaira ID — dataset_sfaira" />
-<meta property="og:description" content="constructor for a dataset using a sfaira ID" />
+<meta property="og:title" content="Build a dataset using a single sfaira entry ID — dataset_sfaira" />
+<meta property="og:description" content="Build a dataset using a single sfaira entry ID" />
 
 
 
@@ -115,23 +115,25 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>constructor for a dataset using a sfaira ID</h1>
+    <h1>Build a dataset using a single sfaira entry ID</h1>
     
     <div class="hidden name"><code>dataset_sfaira.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>constructor for a dataset using a sfaira ID</p>
+    <p>Build a dataset using a single sfaira entry ID</p>
     </div>
 
     <pre class="usage"><span class='fu'>dataset_sfaira</span><span class='op'>(</span>
   <span class='va'>sfaira_id</span>,
   <span class='va'>sfaira_setup</span>,
   <span class='va'>name</span>,
-  count_type <span class='op'>=</span> <span class='st'>"TPM"</span>,
+  count_type <span class='op'>=</span> <span class='st'>"raw"</span>,
   spike_in_col <span class='op'>=</span> <span class='cn'>NULL</span>,
   force <span class='op'>=</span> <span class='cn'>F</span>,
-  filter_genes <span class='op'>=</span> <span class='cn'>F</span>
+  filter_genes <span class='op'>=</span> <span class='cn'>T</span>,
+  variance_cutoff <span class='op'>=</span> <span class='fl'>0</span>,
+  type_abundance_cutoff <span class='op'>=</span> <span class='fl'>0</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -159,7 +161,15 @@
     </tr>
     <tr>
       <th>filter_genes</th>
-      <td><p>boolean, if zero expression genes will be included in dataset or not</p></td>
+      <td><p>boolean, if TRUE, removes all genes with 0 expression over all samples &amp; genes with variance below <code>variance_cutoff</code></p></td>
+    </tr>
+    <tr>
+      <th>variance_cutoff</th>
+      <td><p>numeric, is only applied if <code>filter_genes</code> is TRUE: removes all genes with variance below the chosen cutoff</p></td>
+    </tr>
+    <tr>
+      <th>type_abundance_cutoff</th>
+      <td><p>numeric, remove all cells, whose cell-type appears less then the given value. This removes low abundant cell-types</p></td>
     </tr>
     </table>
 
