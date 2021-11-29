@@ -56,6 +56,9 @@
 <li>
       <a href="../articles/simulator_documentation.html">Getting started with the pseudo-bulk simulator R package</a>
     </li>
+    <li>
+      <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -153,7 +156,8 @@ The <code>name</code> parameter is used later on to give each sample a unique na
 <span class="co">#&gt; [1] "Downloading datasets..."</span>
 <span class="co">#&gt; [1] "Streamlining features &amp; meta-data..."</span>
 <span class="co">#&gt; [1] "Using rownames for cell-IDs."</span>
-<span class="co">#&gt; [1] "Filtering genes..."</span></code></pre></div>
+<span class="co">#&gt; [1] "Filtering genes..."</span>
+<span class="co">#&gt; [1] "Created dataset."</span></code></pre></div>
 <p>Currently there are two datasets in sfaira from human pancreas, which have cell-type annotation. The package will download them for you automatically and merge them together into a single expression matrix and a streamlined annotation table, which we can use for our simulation.<br>
 It can happen, that some datasets from sfaira are not (yet) ready for the automatic download, an error message will then appear in R, telling you which file to download and where to put it.<br></p>
 <p>If you wish to see all datasets which are included in sfaira you can use the following command:</p>
@@ -189,19 +193,35 @@ It can happen, that some datasets from sfaira are not (yet) ready for the automa
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">simulation</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds_human_pancreas</span>,
                                        scenario <span class="op">=</span> <span class="st">"random"</span>, 
-                                       scaling_factor <span class="op">=</span> <span class="st">"none"</span>, 
+                                       scaling_factor <span class="op">=</span> <span class="st">"NONE"</span>, 
                                        ncells<span class="op">=</span><span class="fl">1000</span>, 
                                        nsamples <span class="op">=</span> <span class="fl">50</span>, 
-                                       ncores <span class="op">=</span> <span class="fl">12</span><span class="op">)</span></code></pre></div>
+                                       ncores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>
+<span class="co">#&gt; Finished simulation.</span></code></pre></div>
 <p><code>ncells</code> sets the number of cells in each sample, while <code>nsamples</code> sets the total amount of simulated samples.<br>
 You can also control the number of cells per sample by using the <code>total_read_counts</code> parameter, which sets the total number of counts per sample. This can be used to simulate different sequencing depths. If you wish to use this parameter, it is important to know what type of expression data you have (raw or normalized). If you for example use TPMs as expression values and set the total read counts to <code>1e7</code>, this will get you really huge samples with many cells, since TPM values are generally smaller than the raw count values.</p>
-<p>Currently there are 4 <code>scenarios</code> implemented in the package:<br></p>
+<p>Currently there are 6 <code>scenarios</code> implemented in the package:<br></p>
 <ul>
 <li><p><em>random</em>: for each cell in a sample, the cell-type is chosen randomly. This scenario is depending on the background distribution of the cell-types in the created dataset. If for example your dataset contains 20% B-cells, 40% T-cells and 40% Macrophages, this scenario will create samples where this distribution is mirrored closely.<br></p></li>
 <li><p><em>uniform</em>: this creates samples, where all existing cell-types in the dataset appear in the same proportions. So using a dataset with 3 cell-types, this will simulate samples, where all cell-type fractions are 1/3.<br></p></li>
 <li><p><em>spike-in</em>: here you need to set two additional parameters for the <code><a href="../reference/simulate_bulk.html">simulate_bulk()</a></code> function: <code>spike_in_cell_type</code> sets the cell-type you want to be over-representing and <code>spike_in_amount</code> sets the fraction of this cell-type. You could for example use <code>B-cell</code> and <code>0.5</code> to create samples, where 50% are B-cells and the rest is filled randomly with other cell-types.<br></p></li>
 <li><p><em>spill-over</em>: this simulates samples with only a single cell-type present. Like with <em>spike-in</em> you need to set this cell-type with the additional parameter <code>spillover_cell_type</code>.<br></p></li>
+<li><p><em>unique</em>: this creates simulations of only one single cell-type. You have to provide the name of this cell-type with the <code>unique_cell_type</code> parameter.</p></li>
+<li><p><em>custom</em>: here you are able to create your own set of cell-type fractions. When using this scenario, you additionally need to provide a dataframe in the <code>custom_scenario_data</code> parameter, where each row represents one sample (therefore the number of rows need to match the <code>nsamples</code> parameter). Each column has to represent one cell-type, which also occurs in the dataset and describes the fraction of this cell-type in a sample. The fractions per sample need to sum up to 1. An example can be seen here:</p></li>
 </ul>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">unique_scenario_dataframe</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>
+  <span class="st">"B cells"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.2</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="fl">0.3</span><span class="op">)</span>,
+  <span class="st">"T cells"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.3</span>, <span class="fl">0.8</span>, <span class="fl">0.2</span>, <span class="fl">0.5</span><span class="op">)</span>,
+  <span class="st">"NK cells"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>, <span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.2</span><span class="op">)</span>,
+  row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"sample1"</span>,<span class="st">"sample2"</span>,<span class="st">"sample3"</span>,<span class="st">"sample4"</span><span class="op">)</span>
+<span class="op">)</span>
+<span class="va">unique_scenario_dataframe</span>
+<span class="co">#&gt;         B.cells T.cells NK.cells</span>
+<span class="co">#&gt; sample1     0.2     0.3      0.5</span>
+<span class="co">#&gt; sample2     0.1     0.8      0.1</span>
+<span class="co">#&gt; sample3     0.5     0.2      0.3</span>
+<span class="co">#&gt; sample4     0.3     0.5      0.2</span></code></pre></div>
 </div>
 <div id="results" class="section level2">
 <h2 class="hasAnchor">
@@ -213,7 +233,7 @@ You can also control the number of cells per sample by using the <code>total_rea
 <li><p><code>expression_set</code>: a Biobase <a href="https://rdrr.io/bioc/Biobase/man/class.ExpressionSet.html">ExpressionSet</a><br></p></li>
 </ul>
 <p>Finally here is a boxplot of the resulting simulation:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">fractions</span> <span class="op">&lt;-</span> <span class="va">simulation</span><span class="op">$</span><span class="va">cell_fractions</span>
 <span class="va">fractions</span><span class="op">$</span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">fractions</span><span class="op">)</span>
 <span class="va">frac_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/gather.html">gather</a></span><span class="op">(</span><span class="va">fractions</span>, <span class="va">cell_type</span>, <span class="va">fraction</span>, <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">fractions</span><span class="op">)</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>
@@ -222,7 +242,7 @@ You can also control the number of cells per sample by using the <code>total_rea
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Cell-type fractions for 50 pseudo-bulk RNAseq samples"</span><span class="op">)</span><span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">brewer.pal</a></span><span class="op">(</span><span class="fl">8</span>, <span class="st">"Set2"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span><span class="op">(</span><span class="va">frac_long</span><span class="op">$</span><span class="va">cell_type</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="simulator_documentation_files/figure-html/unnamed-chunk-7-1.png" width="768"></p>
+<p><img src="simulator_documentation_files/figure-html/unnamed-chunk-8-1.png" width="768"></p>
 </div>
 </div>
 <div id="more-features" class="section level1">
@@ -235,7 +255,7 @@ You can also control the number of cells per sample by using the <code>total_rea
 <ul>
 <li>Using a expression matrix &amp; annotation file</li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># change paths accordingly</span>
 <span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/Matrix.html">Matrix</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/as.matrix.html">as.matrix</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html">fread</a></span><span class="op">(</span><span class="st">"~/ma/data/Maynard/X_tpm.csv"</span><span class="op">)</span><span class="op">)</span>, sparse <span class="op">=</span> <span class="cn">T</span><span class="op">)</span>
 <span class="va">genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html">fread</a></span><span class="op">(</span><span class="st">"~/ma/data/Maynard/var.csv"</span><span class="op">)</span>
@@ -251,26 +271,28 @@ You can also control the number of cells per sample by using the <code>total_rea
 <span class="va">dataset_file</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
                                    count_matrix <span class="op">=</span> <span class="va">counts</span>,
                                    name<span class="op">=</span><span class="st">"Maynard"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Filtering genes..."</span></code></pre></div>
+<span class="co">#&gt; [1] "Filtering genes..."</span>
+<span class="co">#&gt; [1] "Created dataset."</span></code></pre></div>
 <ul>
 <li>Using a h5ad expression data &amp; annotation file</li>
 </ul>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># change paths accordingly</span>
-<span class="va">counts</span> <span class="op">&lt;-</span> <span class="st">"~/ma/data/Travaglini/Travaglini_Krasnow_2020_Lung_SS2.h5ad"</span>
+<span class="va">h5ad_file</span> <span class="op">&lt;-</span> <span class="st">"~/ma/data/Travaglini/Travaglini_Krasnow_2020_Lung_SS2.h5ad"</span>
 <span class="va">annotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html">fread</a></span><span class="op">(</span><span class="st">"~/ma/data/Travaglini/obs_extended.csv"</span><span class="op">)</span>
 <span class="co"># renaming the columns</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span> <span class="op">==</span> <span class="st">"free_annotation"</span><span class="op">)</span><span class="op">]</span><span class="op">&lt;-</span><span class="st">"cell_type"</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span> <span class="op">==</span> <span class="st">"index"</span><span class="op">)</span><span class="op">]</span><span class="op">&lt;-</span><span class="st">"ID"</span>
 
 <span class="va">dataset_h5ad</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_h5ad.html">dataset_h5ad</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
-                                        h5ad_file <span class="op">=</span> <span class="va">counts</span>, 
+                                        h5ad_file <span class="op">=</span> <span class="va">h5ad_file</span>, 
                                         name <span class="op">=</span> <span class="st">"Travaglini"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Filtering genes..."</span></code></pre></div>
+<span class="co">#&gt; [1] "Filtering genes..."</span>
+<span class="co">#&gt; [1] "Created dataset."</span></code></pre></div>
 <ul>
 <li>Using a Seurat Object and annotation file</li>
 </ul>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># download Seurat object from tabula muris</span>
 <span class="co"># https://figshare.com/ndownloader/files/13088531</span>
 <span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="st">"~/ma/data/tabula_muris/tabula_muris_bladder.Robj"</span><span class="op">)</span>
@@ -289,14 +311,15 @@ You can also control the number of cells per sample by using the <code>total_rea
 <span class="va">dataset_seurat</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_seurat.html">dataset_seurat</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
                                             seurat_obj <span class="op">=</span> <span class="va">seurat_obj</span>,
                                             name<span class="op">=</span><span class="st">"TabulaMuris_Bladder"</span><span class="op">)</span>
-<span class="co">#&gt; [1] "Filtering genes..."</span></code></pre></div>
+<span class="co">#&gt; [1] "Filtering genes..."</span>
+<span class="co">#&gt; [1] "Created dataset."</span></code></pre></div>
 <p><strong>Important:</strong> the annotation dataframe you are feeding into the dataset, needs these two columns: <code>ID</code> for the cell ID, which has to be in common with the cell IDs in the expression matrix and <code>cell_type</code>, which gives the cell-type for a cell.<br></p>
 </div>
 <div id="simulate-using-a-whitelist-and-blacklist-of-cell-types" class="section level2">
 <h2 class="hasAnchor">
 <a href="#simulate-using-a-whitelist-and-blacklist-of-cell-types" class="anchor"></a>Simulate using a whitelist (and blacklist) of cell-types</h2>
 <p>Sometimes, you are only interested in specific cell-types, but the dataset you are using has way too many cell-types:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span><span class="op">(</span><span class="va">dataset_file</span><span class="op">@</span><span class="va">annotation</span><span class="op">$</span><span class="va">cell_type</span><span class="op">)</span>
 <span class="co">#&gt;  [1] "Monocyte conventional"      "Macrophage"                </span>
 <span class="co">#&gt;  [3] "Endothelial cell"           "Mast cell"                 </span>
@@ -322,16 +345,17 @@ You can also control the number of cells per sample by using the <code>total_rea
 <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span><span class="op">(</span><span class="va">dataset_file</span><span class="op">@</span><span class="va">annotation</span><span class="op">$</span><span class="va">cell_type</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] 42</span></code></pre></div>
 <p>You can handle this issue during simulation using the <code>whitelist</code> parameter:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">simulation</span> <span class="op">&lt;-</span>  <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataset_file</span>,
-                                        scenario <span class="op">=</span> <span class="st">"spike-in"</span>, 
-                                        scaling_factor <span class="op">=</span> <span class="st">"none"</span>, 
+                                        scenario <span class="op">=</span> <span class="st">"spike_in"</span>, 
+                                        scaling_factor <span class="op">=</span> <span class="st">"NONE"</span>, 
                                         spike_in_cell_type <span class="op">=</span> <span class="st">"NK cell"</span>,
                                         spike_in_amount <span class="op">=</span> <span class="fl">0.5</span>,
                                         ncells<span class="op">=</span><span class="fl">1000</span>, 
                                         nsamples <span class="op">=</span> <span class="fl">50</span>, 
                                         ncores <span class="op">=</span> <span class="fl">12</span>,
                                         whitelist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NK cell"</span>,<span class="st">"B cell"</span>,<span class="st">"T cell CD8"</span>, <span class="st">"T cell CD4"</span>, <span class="st">"Macrophage"</span>, <span class="st">"Monocyte conventional"</span>, <span class="st">"Monocyte non-conventional"</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; Finished simulation.</span>
 
 <span class="va">fractions</span> <span class="op">&lt;-</span> <span class="va">simulation</span><span class="op">$</span><span class="va">cell_fractions</span>
 <span class="va">fractions</span><span class="op">$</span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">fractions</span><span class="op">)</span>
@@ -341,26 +365,34 @@ You can also control the number of cells per sample by using the <code>total_rea
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_col</a></span><span class="op">(</span><span class="op">)</span><span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Cell-type fractions for 50 pseudo-bulk RNAseq samples"</span><span class="op">)</span><span class="op">+</span>
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html">scale_fill_manual</a></span><span class="op">(</span>values <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/colorRamp.html">colorRampPalette</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html">brewer.pal</a></span><span class="op">(</span><span class="fl">8</span>, <span class="st">"Set2"</span><span class="op">)</span><span class="op">)</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/duplicated.html">unique</a></span><span class="op">(</span><span class="va">frac_long</span><span class="op">$</span><span class="va">cell_type</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p><img src="simulator_documentation_files/figure-html/unnamed-chunk-12-1.png" width="768"></p>
+<p><img src="simulator_documentation_files/figure-html/unnamed-chunk-13-1.png" width="768"></p>
 <p>In the same way, you can also provide a <code>blacklist</code> parameter, where you name the cell-types you <strong>don’t</strong> want to be included in your simulation.</p>
 </div>
-<div id="using-scaling-factors-census" class="section level2">
+<div id="filtering-and-aggregation" class="section level2">
 <h2 class="hasAnchor">
-<a href="#using-scaling-factors-census" class="anchor"></a>Using scaling factors (Census)</h2>
-<p>[I am still working on this section..]</p>
-<p><a href="http://cole-trapnell-lab.github.io/monocle-release/docs/#census">Census</a> is an approach which tries to convert TPM counts into relative transcript counts. This basically means, you get the mRNA counts per cell, which can differ between cell-types.<br><span class="citation">(<a href="#ref-Qiu2017" role="doc-biblioref">Qiu et al. 2017</a>)</span> state in their paper, that it should only be applied to TPM/FPKM normalized data, but I tried it out with raw expression counts as well, which worked as well.<br>
-Census calculates a vector with a scaling value for each cell in a sample. The simulated expression matrix will be multiplied with this vector in order to census-normalize the pseudo-bulk sample.<br>
-You can switch this feature on, by setting the <code>scaling_factor</code> parameter to <code>census</code>.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">simulation</span> <span class="op">&lt;-</span>  <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataset_file</span>,
-                                        scenario <span class="op">=</span> <span class="st">"spike-in"</span>, 
-                                        scaling_factor <span class="op">=</span> <span class="st">"census"</span>,   <span class="co"># use census scaling factor</span>
-                                        spike_in_cell_type <span class="op">=</span> <span class="st">"NK cell"</span>,
-                                        spike_in_amount <span class="op">=</span> <span class="fl">0.5</span>,
-                                        ncells<span class="op">=</span><span class="fl">1000</span>, 
-                                        nsamples <span class="op">=</span> <span class="fl">50</span>, 
-                                        ncores <span class="op">=</span> <span class="fl">12</span>,
-                                        whitelist <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"NK cell"</span>,<span class="st">"B cell"</span>,<span class="st">"T cell CD8"</span>, <span class="st">"T cell CD4"</span>, <span class="st">"Macrophage"</span>, <span class="st">"Monocyte conventional"</span>, <span class="st">"Monocyte non-conventional"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<a href="#filtering-and-aggregation" class="anchor"></a>Filtering and Aggregation</h2>
+<p>It is possible to filter your dataset by variance and remove genes with only 0 expression values. Also low expressed cell-types can be removed.</p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">ds_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation<span class="op">=</span><span class="va">annotation</span>,
+                       count_matrix <span class="op">=</span> <span class="va">count_matrix</span>,
+                       name<span class="op">=</span><span class="st">"filter_test"</span>, 
+                       type_abundance_cutoff<span class="op">=</span><span class="fl">10</span>, 
+                       filter_genes <span class="op">=</span> <span class="cn">T</span>, 
+                       variance_cutoff <span class="op">=</span> <span class="fl">.1</span><span class="op">)</span></code></pre></div>
+<p>Here we removed all cells which belong to a cell-type that has only 10 or less cells annotated with the <code>type_abundance_cutoff</code> parameter.<br><code>filter_genes</code> will remove all genes which have an expression value of 0 over all cells.<br>
+With <code>variance_cutoff</code> you can set a cutoff to remove all genes with a variance over all cells below this value.<br></p>
+<p><br></p>
+<p>The pseudo-bulk sample will be generated by aggregating the expression values from all sampled cells and is then normalized. The default aggregation method is <code>mean</code>, but you also have the options <code>sum</code> and <code>median</code>. You can select them like this:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R">
+<span class="va">sim_aggregation</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">ds</span>,
+                                 scenario<span class="op">=</span><span class="st">"random"</span>,
+                                 scaling_factor<span class="op">=</span><span class="st">"NONE"</span>,
+                                 sample_aggreation <span class="op">=</span> <span class="st">"median"</span>,  <span class="co"># use median as aggregation</span>
+                                 nsamples <span class="op">=</span> <span class="fl">100</span>, 
+                                 ncells<span class="op">=</span><span class="fl">1000</span>,
+                                 ncores<span class="op">=</span><span class="fl">4</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
 <div id="references" class="section level1 unnumbered">
@@ -369,9 +401,6 @@ You can switch this feature on, by setting the <code>scaling_factor</code> param
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Fischer2020" class="csl-entry">
 Fischer, David S., Leander Dony, Martin König, Abdul Moeed, Luke Zappia, Sophie Tritschler, Olle Holmberg, Hananeh Aliee, and Fabian J. Theis. 2020. <span>“Sfaira Accelerates Data and Model Reuse in Single Cell Genomics.”</span> <em>bioRxiv</em>. <a href="https://doi.org/10.1101/2020.12.16.419036">https://doi.org/10.1101/2020.12.16.419036</a>.
-</div>
-<div id="ref-Qiu2017" class="csl-entry">
-Qiu, Xiaojie, Andrew Hill, Jonathan Packer, Dejun Lin, Yi-An Ma, and Cole Trapnell. 2017. <span>“Single-Cell mRNA Quantification and Differential Analysis with Census.”</span> <em>Nature Methods</em> 14 (3): 309–15. <a href="https://doi.org/10.1038/nmeth.4150">https://doi.org/10.1038/nmeth.4150</a>.
 </div>
 </div>
 </div>

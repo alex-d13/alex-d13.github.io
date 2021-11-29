@@ -97,6 +97,9 @@
     <li>
       <a href="../articles/simulator_documentation.html">Getting started with the pseudo-bulk simulator R package</a>
     </li>
+    <li>
+      <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -130,6 +133,8 @@
   <span class='va'>name</span>,
   count_type <span class='op'>=</span> <span class='st'>"raw"</span>,
   spike_in_col <span class='op'>=</span> <span class='cn'>NULL</span>,
+  read_number_col <span class='op'>=</span> <span class='cn'>NULL</span>,
+  additional_cols <span class='op'>=</span> <span class='cn'>NULL</span>,
   force <span class='op'>=</span> <span class='cn'>F</span>,
   filter_genes <span class='op'>=</span> <span class='cn'>T</span>,
   variance_cutoff <span class='op'>=</span> <span class='fl'>0</span>,
@@ -158,6 +163,10 @@
     <tr>
       <th>spike_in_col</th>
       <td><p>which column in annotation contains information on spike-in counts, which can be used to re-scale counts</p></td>
+    </tr>
+    <tr>
+      <th>read_number_col</th>
+      <td><p>which column in annotation contains information on total read numbers in a cell; mandatory for "spike-in" scaling factor and "read-number" in simulation</p></td>
     </tr>
     <tr>
       <th>filter_genes</th>

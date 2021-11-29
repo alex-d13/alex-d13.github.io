@@ -98,6 +98,9 @@ http://cole-trapnell-lab.github.io/monocle-release/docs/#census" />
     <li>
       <a href="../articles/simulator_documentation.html">Getting started with the pseudo-bulk simulator R package</a>
     </li>
+    <li>
+      <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -131,7 +134,7 @@ http://cole-trapnell-lab.github.io/monocle-release/docs/#census" />
   exp_capture_rate <span class='op'>=</span> <span class='fl'>0.25</span>,
   expr_threshold <span class='op'>=</span> <span class='fl'>0</span>,
   ncores <span class='op'>=</span> <span class='fl'>1</span>,
-  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"monocle"</span>, <span class='st'>"paper"</span>, <span class='st'>"t_estimate"</span><span class='op'>)</span>
+  method <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"monocle"</span>, <span class='st'>"paper"</span>, <span class='st'>"expr_genes"</span><span class='op'>)</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -155,7 +158,7 @@ http://cole-trapnell-lab.github.io/monocle-release/docs/#census" />
     </tr>
     <tr>
       <th>method</th>
-      <td><p>implementation of census; possible are: <code>monocle</code>,<code>paper</code>,<code>t_estimate</code></p></td>
+      <td><p>implementation of census; possible are: <code>monocle</code> and <code>paper</code></p></td>
     </tr>
     </table>
 

@@ -99,6 +99,9 @@ scaling_factor on how the read counts will be transformed proir to the simulatio
     <li>
       <a href="../articles/simulator_documentation.html">Getting started with the pseudo-bulk simulator R package</a>
     </li>
+    <li>
+      <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
+    </li>
   </ul>
 </li>
       </ul>
@@ -123,19 +126,22 @@ scaling_factor on how the read counts will be transformed proir to the simulatio
     </div>
 
     <div class="ref-description">
-    <p>This function allows you to create a full pseudo-bulk RNAseq dataset. You need to provide a <code><a href='dataset.html'>dataset</a></code> or <code><a href='database.html'>database</a></code> from which the cells
+    <p>This function allows you to create a full pseudo-bulk RNAseq dataset. You need to provide a <code><a href='dataset.html'>dataset</a></code> or <code>database</code> from which the cells
 will be sampled for the simulation. Also a <code>scenario</code> has to be selected, where you can choose how the cells will be sampled and a
 <code>scaling_factor</code> on how the read counts will be transformed proir to the simulation.</p>
     </div>
 
     <pre class="usage"><span class='fu'>simulate_bulk</span><span class='op'>(</span>
   <span class='va'>data</span>,
-  scenario <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"uniform"</span>, <span class='st'>"random"</span>, <span class='st'>"spike-in"</span>, <span class='st'>"unique"</span>, <span class='st'>"custom"</span><span class='op'>)</span>,
-  scaling_factor <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"NONE"</span>, <span class='st'>"census"</span>, <span class='st'>"spike-in"</span><span class='op'>)</span>,
+  scenario <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"uniform"</span>, <span class='st'>"random"</span>, <span class='st'>"mirror_db"</span>, <span class='st'>"spike_in"</span>, <span class='st'>"unique"</span>, <span class='st'>"custom"</span><span class='op'>)</span>,
+  scaling_factor <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"NONE"</span>, <span class='st'>"census"</span>, <span class='st'>"spike-in"</span>, <span class='st'>"custom"</span>, <span class='st'>"read-number"</span><span class='op'>)</span>,
   spike_in_cell_type <span class='op'>=</span> <span class='cn'>NULL</span>,
   spike_in_amount <span class='op'>=</span> <span class='cn'>NULL</span>,
   unique_cell_type <span class='op'>=</span> <span class='cn'>NULL</span>,
   custom_scenario_data <span class='op'>=</span> <span class='cn'>NULL</span>,
+  custom_scaling_vector <span class='op'>=</span> <span class='cn'>NULL</span>,
+  scaling_factor_aggregation <span class='op'>=</span> <span class='st'>"multiply"</span>,
+  sample_aggreation <span class='op'>=</span> <span class='st'>"mean"</span>,
   nsamples <span class='op'>=</span> <span class='fl'>100</span>,
   ncells <span class='op'>=</span> <span class='fl'>1000</span>,
   total_read_counts <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -149,15 +155,15 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>data</th>
-      <td><p><code><a href='dataset.html'>dataset</a></code> or <code><a href='database.html'>database</a></code> object</p></td>
+      <td><p><code><a href='dataset.html'>dataset</a></code> object</p></td>
     </tr>
     <tr>
       <th>scenario</th>
-      <td><p>select on of the pre-defined cell-type fraction scenarios; possible are: <code>uniform</code>,<code>random</code>,<code>unique</code>,<code>spill-over</code>; you can also use the <code>custom</code> scenario, where you need to set the <code>custom_scenario_data</code> parameter.</p></td>
+      <td><p>select on of the pre-defined cell-type fraction scenarios; possible are: <code>uniform</code>,<code>random</code>,<code>mirror_db</code>,<code>unique</code>,<code>spill-over</code>; you can also use the <code>custom</code> scenario, where you need to set the <code>custom_scenario_data</code> parameter.</p></td>
     </tr>
     <tr>
       <th>scaling_factor</th>
-      <td><p>name of scaling factor; possible are: <code>census</code>, <code>spike-in</code> or <code>NONE</code> for no scaling factor</p></td>
+      <td><p>name of scaling factor; possible are: <code>census</code>, <code>spike-in</code>, <code>read-number</code>, <code>custom</code> or <code>NONE</code> for no scaling factor</p></td>
     </tr>
     <tr>
       <th>spike_in_cell_type</th>
@@ -170,6 +176,18 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
     <tr>
       <th>custom_scenario_data</th>
       <td><p>dataframe; needs to be of size <code>nsamples</code> x number_of_cell_types, where each sample is a row and each entry is the cell-type fraction. Rows need to sum up to 1.</p></td>
+    </tr>
+    <tr>
+      <th>custom_scaling_vector</th>
+      <td><p>named vector with custom scaling values for cell-types. Cell-types that do not occur in this vector but are present in the dataset will be set to 1; mandatory for <code>custom</code> scaling factor</p></td>
+    </tr>
+    <tr>
+      <th>scaling_factor_aggregation</th>
+      <td><p>aggregation function how to apply the scaling factor, possible are: <code>multiply</code>(default) and <code>division</code></p></td>
+    </tr>
+    <tr>
+      <th>sample_aggreation</th>
+      <td><p>aggregation method on how to generate a sample; possible are: <code>mean</code>(default), <code>sum</code>, <code>median</code></p></td>
     </tr>
     <tr>
       <th>nsamples</th>
@@ -205,6 +223,7 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
 
     <p>named list; <code>pseudo_bulk</code> is a sparse matrix with the simulated counts;
 <code>cell-fractions</code> is a dataframe with the simulated cell-fractions per sample;
+<code>scaling_vector</code> scaling value for each cell in dataset
 <code>expression_set</code> is a Bioconductor Expression Set <a href='http://www.bioconductor.org/packages/release/bioc/vignettes/Biobase/inst/doc/ExpressionSetIntroduction.pdf'>http://www.bioconductor.org/packages/release/bioc/vignettes/Biobase/inst/doc/ExpressionSetIntroduction.pdf</a></p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
@@ -213,10 +232,7 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
 <span class='fu'>simulate_bulk</span><span class='op'>(</span><span class='va'>dataset</span>, scenario<span class='op'>=</span><span class='st'>"uniform"</span>, scaling_factor<span class='op'>=</span><span class='st'>"NONE"</span>, nsamples<span class='op'>=</span><span class='fl'>10</span>, ncells<span class='op'>=</span><span class='fl'>2000</span><span class='op'>)</span>
 
 <span class='co'># use the spike-in scenario to have 50% B cells per sample</span>
-<span class='fu'>simulate_bulk</span><span class='op'>(</span><span class='va'>dataset</span>, scenario<span class='op'>=</span><span class='st'>"spike-in"</span>, scaling_factor<span class='op'>=</span><span class='st'>"NONE"</span>, nsamples<span class='op'>=</span><span class='fl'>10</span>, ncells<span class='op'>=</span><span class='fl'>2000</span>, spike_in_cell_type<span class='op'>=</span><span class='st'>"Bcell"</span>, spike_in_amount<span class='op'>=</span><span class='fl'>0.5</span><span class='op'>)</span>
-
-<span class='co'># use the unique scenario to only have B cells</span>
-<span class='fu'>simulate_bulk</span><span class='op'>(</span><span class='va'>dataset</span>, scenario<span class='op'>=</span><span class='st'>"unique"</span>, scaling_factor<span class='op'>=</span><span class='st'>"NONE"</span>, nsamples<span class='op'>=</span><span class='fl'>10</span>, ncells<span class='op'>=</span><span class='fl'>2000</span>, unique_cell_type<span class='op'>=</span><span class='st'>"Bcell"</span><span class='op'>)</span>
+<span class='fu'>simulate_bulk</span><span class='op'>(</span><span class='va'>dataset</span>, scenario<span class='op'>=</span><span class='st'>"spike_in"</span>, scaling_factor<span class='op'>=</span><span class='st'>"NONE"</span>, nsamples<span class='op'>=</span><span class='fl'>10</span>, ncells<span class='op'>=</span><span class='fl'>2000</span>, spike_in_cell_type<span class='op'>=</span><span class='st'>"Bcell"</span>, spike_in_amount<span class='op'>=</span><span class='fl'>0.5</span><span class='op'>)</span>
 
 <span class='co'># use the unique scenario to only have B cells</span>
 <span class='fu'>simulate_bulk</span><span class='op'>(</span><span class='va'>dataset</span>, scenario<span class='op'>=</span><span class='st'>"unique"</span>, scaling_factor<span class='op'>=</span><span class='st'>"NONE"</span>, nsamples<span class='op'>=</span><span class='fl'>10</span>, ncells<span class='op'>=</span><span class='fl'>2000</span>, unique_cell_type<span class='op'>=</span><span class='st'>"Bcell"</span><span class='op'>)</span>

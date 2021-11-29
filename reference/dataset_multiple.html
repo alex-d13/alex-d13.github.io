@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>setup the sfaira package — setup_sfaira • simulator</title>
+<title>constructor to merge multiple datasets into one — dataset_multiple • simulator</title>
 
 
 <!-- jquery -->
@@ -39,11 +39,8 @@
 
 
 
-<meta property="og:title" content="setup the sfaira package — setup_sfaira" />
-<meta property="og:description" content="If you want to download datasets from sfaira, you need to setup the connection to their database first.
-Sfaira should be installed in its own conda environment; the python-path used inside of this environment
-as well as the name of the environment have to be given to this function. Additionally you have to give the
-path to a directory where the sfaira datasets will be downloaded into." />
+<meta property="og:title" content="constructor to merge multiple datasets into one — dataset_multiple" />
+<meta property="og:description" content="constructor to merge multiple datasets into one" />
 
 
 
@@ -121,46 +118,44 @@ path to a directory where the sfaira datasets will be downloaded into." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>setup the sfaira package</h1>
+    <h1>constructor to merge multiple datasets into one</h1>
     
-    <div class="hidden name"><code>setup_sfaira.Rd</code></div>
+    <div class="hidden name"><code>dataset_multiple.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>If you want to download datasets from sfaira, you need to setup the connection to their database first.
-Sfaira should be installed in its own conda environment; the python-path used inside of this environment
-as well as the name of the environment have to be given to this function. Additionally you have to give the
-path to a directory where the sfaira datasets will be downloaded into.</p>
+    <p>constructor to merge multiple datasets into one</p>
     </div>
 
-    <pre class="usage"><span class='fu'>setup_sfaira</span><span class='op'>(</span><span class='va'>python_path</span>, <span class='va'>env_name</span>, <span class='va'>basedir</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>dataset_multiple</span><span class='op'>(</span>
+  <span class='va'>dataset_list</span>,
+  <span class='va'>name</span>,
+  count_type <span class='op'>=</span> <span class='st'>"raw"</span>,
+  spike_in_col <span class='op'>=</span> <span class='cn'>NULL</span>,
+  read_number_col <span class='op'>=</span> <span class='cn'>NULL</span>,
+  additional_cols <span class='op'>=</span> <span class='cn'>NULL</span>,
+  filter_genes <span class='op'>=</span> <span class='cn'>T</span>,
+  variance_cutoff <span class='op'>=</span> <span class='fl'>0</span>,
+  type_abundance_cutoff <span class='op'>=</span> <span class='fl'>0</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>python_path</th>
-      <td><p>path to the python executable</p></td>
+      <th>dataset_list</th>
+      <td><p>list of dataset objects</p></td>
     </tr>
     <tr>
-      <th>env_name</th>
-      <td><p>name of the conda environment in which sfaira is installed</p></td>
-    </tr>
-    <tr>
-      <th>basedir</th>
-      <td><p>name of the directory, where the raw files will be downloaded into</p></td>
+      <th>name</th>
+      <td><p>name of the new dataset</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>list with sfaira package and file directories; must be used for other sfaira functions</p>
+    <p>dataset object</p>
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>sfaira_list</span> <span class='op'>&lt;-</span> <span class='fu'>setup_sfaira</span><span class='op'>(</span>python_path<span class='op'>=</span><span class='st'>"/path/to/conda/envs/sfaira/bin/python3"</span>,env_name<span class='op'>=</span><span class='st'>"sfaira"</span>, basedir<span class='op'>=</span><span class='st'>"/home/sfaira_data"</span><span class='op'>)</span>
-<span class='op'>}</span>
-</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
