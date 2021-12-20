@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>download a specific dataset from sfaira by an ID — download_sfaira • SimBu</title>
+<title>Sample cells based of sequencing depth — sample_cells_by_read_depth • SimBu</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="download a specific dataset from sfaira by an ID — download_sfaira" />
-<meta property="og:description" content="download a specific dataset from sfaira by an ID" />
+<meta property="og:title" content="Sample cells based of sequencing depth — sample_cells_by_read_depth" />
+<meta property="og:description" content="This function allows to sample cells from a dataframe including the number of reads per cell until a pre-defined
+sequencing depth is met or no cells are left with low enough read numbers to reach this depth." />
 
 
 
@@ -118,51 +119,34 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>download a specific dataset from sfaira by an ID</h1>
+    <h1>Sample cells based of sequencing depth</h1>
     
-    <div class="hidden name"><code>download_sfaira.Rd</code></div>
+    <div class="hidden name"><code>sample_cells_by_read_depth.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>download a specific dataset from sfaira by an ID</p>
+    <p>This function allows to sample cells from a dataframe including the number of reads per cell until a pre-defined
+sequencing depth is met or no cells are left with low enough read numbers to reach this depth.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>download_sfaira</span><span class='op'>(</span>
-  <span class='va'>setup_list</span>,
-  <span class='va'>id</span>,
-  force <span class='op'>=</span> <span class='cn'>F</span>,
-  synapse_user <span class='op'>=</span> <span class='cn'>NULL</span>,
-  synapse_pw <span class='op'>=</span> <span class='cn'>NULL</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>sample_cells_by_read_depth</span><span class='op'>(</span><span class='va'>cells</span>, <span class='va'>depth</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>setup_list</th>
-      <td><p>the sfaira setup; given by <code><a href='setup_sfaira.html'>setup_sfaira</a></code></p></td>
+      <th>cells</th>
+      <td><p>dataframe; needs to contain a "read_number" column</p></td>
     </tr>
     <tr>
-      <th>id</th>
-      <td><p>the ID of the datasets</p></td>
-    </tr>
-    <tr>
-      <th>force</th>
-      <td><p>logical; TRUE if you want to force the download, even though no cell-type annotation exists for this dataset. Default if FALSE</p></td>
-    </tr>
-    <tr>
-      <th>synapse_user</th>
-      <td><p>character; username for synapse portal (https://www.synapse.org)</p></td>
-    </tr>
-    <tr>
-      <th>synapse_pw</th>
-      <td><p>character; password for synapse portal (https://www.synapse.org)</p></td>
+      <th>total_read_counts</th>
+      <td><p>numeric; the total number of reads the sampled cells will sum up to (approximatly)</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a anndata object, stores counts, metadata and other information on the dataset</p>
+    <p>list of cell IDs</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

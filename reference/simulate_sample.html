@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>simulate single pseudo-bulk sample — simulate_sample • simulator</title>
+<title>simulate single pseudo-bulk sample — simulate_sample • SimBu</title>
 
 
 <!-- jquery -->
@@ -73,7 +73,7 @@ Note: if total_read_counts is used, the cell-fractions are applied to the number
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">simulator</a>
+        <a class="navbar-link" href="../index.html">SimBu</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
@@ -136,7 +136,6 @@ Note: if total_read_counts is used, the cell-fractions are applied to the number
   <span class='va'>scaling_factor</span>,
   <span class='va'>scaling_vector</span>,
   <span class='va'>simulation_vector</span>,
-  <span class='va'>scaling_factor_aggregation</span>,
   <span class='va'>sample_aggreation</span>,
   <span class='va'>total_cells</span>,
   <span class='va'>total_read_counts</span>,
@@ -161,10 +160,6 @@ Note: if total_read_counts is used, the cell-fractions are applied to the number
     <tr>
       <th>simulation_vector</th>
       <td><p>named vector with wanted cell-types and their fractions</p></td>
-    </tr>
-    <tr>
-      <th>scaling_factor_aggregation</th>
-      <td><p>aggregation function how to apply the scaling factor, possible are: <code>multiply</code>(default) and <code>division</code></p></td>
     </tr>
     <tr>
       <th>sample_aggreation</th>

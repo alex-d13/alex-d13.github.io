@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>simulate whole pseudo-bulk RNAseq dataset — simulate_bulk • simulator</title>
+<title>simulate whole pseudo-bulk RNAseq dataset — simulate_bulk • SimBu</title>
 
 
 <!-- jquery -->
@@ -73,7 +73,7 @@ scaling_factor on how the read counts will be transformed proir to the simulatio
         <span class="icon-bar"></span>
       </button>
       <span class="navbar-brand">
-        <a class="navbar-link" href="../index.html">simulator</a>
+        <a class="navbar-link" href="../index.html">SimBu</a>
         <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
       </span>
     </div>
@@ -134,14 +134,15 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
     <pre class="usage"><span class='fu'>simulate_bulk</span><span class='op'>(</span>
   <span class='va'>data</span>,
   scenario <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"uniform"</span>, <span class='st'>"random"</span>, <span class='st'>"mirror_db"</span>, <span class='st'>"spike_in"</span>, <span class='st'>"unique"</span>, <span class='st'>"custom"</span><span class='op'>)</span>,
-  scaling_factor <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"NONE"</span>, <span class='st'>"census"</span>, <span class='st'>"spike-in"</span>, <span class='st'>"custom"</span>, <span class='st'>"read-number"</span><span class='op'>)</span>,
+  scaling_factor <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"NONE"</span>, <span class='st'>"census"</span>, <span class='st'>"spike-in"</span>, <span class='st'>"custom"</span>, <span class='st'>"read-number"</span>,
+    <span class='st'>"annotation_column"</span><span class='op'>)</span>,
   spike_in_cell_type <span class='op'>=</span> <span class='cn'>NULL</span>,
   spike_in_amount <span class='op'>=</span> <span class='cn'>NULL</span>,
   unique_cell_type <span class='op'>=</span> <span class='cn'>NULL</span>,
   custom_scenario_data <span class='op'>=</span> <span class='cn'>NULL</span>,
   custom_scaling_vector <span class='op'>=</span> <span class='cn'>NULL</span>,
-  scaling_factor_aggregation <span class='op'>=</span> <span class='st'>"multiply"</span>,
-  sample_aggreation <span class='op'>=</span> <span class='st'>"mean"</span>,
+  balance_unique_mirror_scenario <span class='op'>=</span> <span class='fl'>0.01</span>,
+  sample_aggreation <span class='op'>=</span> <span class='st'>"sum"</span>,
   nsamples <span class='op'>=</span> <span class='fl'>100</span>,
   ncells <span class='op'>=</span> <span class='fl'>1000</span>,
   total_read_counts <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -174,6 +175,10 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
       <td><p>fraction of cell-type used for <code>spike-in</code> scenario; must be between <code>0</code> and <code>0.99</code></p></td>
     </tr>
     <tr>
+      <th>unique_cell_type</th>
+      <td><p>name of cell-type for <code>unique</code> scenario</p></td>
+    </tr>
+    <tr>
       <th>custom_scenario_data</th>
       <td><p>dataframe; needs to be of size <code>nsamples</code> x number_of_cell_types, where each sample is a row and each entry is the cell-type fraction. Rows need to sum up to 1.</p></td>
     </tr>
@@ -182,12 +187,12 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
       <td><p>named vector with custom scaling values for cell-types. Cell-types that do not occur in this vector but are present in the dataset will be set to 1; mandatory for <code>custom</code> scaling factor</p></td>
     </tr>
     <tr>
-      <th>scaling_factor_aggregation</th>
-      <td><p>aggregation function how to apply the scaling factor, possible are: <code>multiply</code>(default) and <code>division</code></p></td>
+      <th>balance_unique_mirror_scenario</th>
+      <td><p>balancing value for the <code>uniform</code> and <code>mirror_db</code> scenarios: increasing it will result in more diverse simulated fractions. To get the same fractions in each sample, set to 0. Default is 0.01.</p></td>
     </tr>
     <tr>
       <th>sample_aggreation</th>
-      <td><p>aggregation method on how to generate a sample; possible are: <code>mean</code>(default), <code>sum</code>, <code>median</code></p></td>
+      <td><p>aggregation method on how to generate a sample; possible are: <code>sum</code>(default), <code>mean</code>, <code>median</code></p></td>
     </tr>
     <tr>
       <th>nsamples</th>
