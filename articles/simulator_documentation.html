@@ -57,6 +57,9 @@
       <a href="../articles/simulator_documentation.html">Getting started with the pseudo-bulk simulator R package</a>
     </li>
     <li>
+      <a href="../articles/simulator_input_output.html">Inputs &amp; Outputs</a>
+    </li>
+    <li>
       <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
     </li>
   </ul>
@@ -112,7 +115,7 @@
 <h1 class="hasAnchor">
 <a href="#introduction" class="anchor"></a>Introduction</h1>
 <p>Cell-type deconvolution is an important analysis-step while processing bulk RNA-seq experiments and many tools exist to tackle this issue. Though the user lacks a good comparison between those tools and when one might be more beneficial than others.<br>
-The goal of  is to create benchmark datasets, where pseudo bulk samples with predefined cell-type fractions can be simulated using expression data from single-cell RNAseq experiments.</p>
+The goal of SimBu is to create benchmark datasets, where pseudo bulk samples with predefined cell-type fractions can be simulated using expression data from single-cell RNAseq experiments.</p>
 </div>
 <div id="getting-started" class="section level1">
 <h1 class="hasAnchor">
@@ -131,7 +134,7 @@ conda activate sfaira
 <p>You do not need to activate the new conda environment each time in order to use it in the R package.<br>
 To setup sfaira inside of the R package use this command:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">setup_list</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/simulator/man/setup_sfaira.html">setup_sfaira</a></span><span class="op">(</span>python_path <span class="op">=</span> <span class="st">"/nfs/home/students/adietrich/.conda/envs/sfaira/bin/python3"</span>,
+<code class="sourceCode R"><span class="va">setup_list</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/setup_sfaira.html">setup_sfaira</a></span><span class="op">(</span>python_path <span class="op">=</span> <span class="st">"/nfs/home/students/adietrich/.conda/envs/sfaira/bin/python3"</span>,
                                       env_name <span class="op">=</span> <span class="st">"sfaira"</span>, 
                                       basedir <span class="op">=</span> <span class="st">"/nfs/home/students/adietrich/ma/data/sfaira"</span><span class="op">)</span></code></pre></div>
 <p>The <code>python_path</code> parameter is used to set the path to the python executable <strong>inside</strong> of the newly created conda environment. Similarly, the <code>env_name</code> parameter is the name of this newly created conda environment. These two parameters need to be set correctly, so that sfaira can be used later on. You can find out the python-path in a conda environment named <code>sfaira</code> like this:<br></p>
@@ -148,7 +151,7 @@ If you do not wish to use sfaira, just skip this step entirely.</p>
 We will now create a dataset of samples from human pancreas using the <code>organisms</code> and <code>tissues</code> parameter. You can provide a single word (like we do here) or for example a list of tissues you want to download: <code><a href="https://rdrr.io/r/base/c.html">c("pancreas","lung")</a></code>. An additional parameter is the <code>assays</code> parameter, where you subset the database further to only download datasets from certain sequencing assays (for examples <code>Smart-seq2</code>).<br>
 The <code>name</code> parameter is used later on to give each sample a unique name.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ds_human_pancreas</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/simulator/man/dataset_sfaira_multiple.html">dataset_sfaira_multiple</a></span><span class="op">(</span>sfaira_setup <span class="op">=</span> <span class="va">setup_list</span>,
+<code class="sourceCode R"><span class="va">ds_human_pancreas</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_sfaira_multiple.html">dataset_sfaira_multiple</a></span><span class="op">(</span>sfaira_setup <span class="op">=</span> <span class="va">setup_list</span>,
                                                         organisms <span class="op">=</span> <span class="st">"human"</span>, 
                                                         tissues <span class="op">=</span> <span class="st">"pancreas"</span>, 
                                                         name<span class="op">=</span><span class="st">"human_pancreas"</span><span class="op">)</span>
@@ -162,7 +165,7 @@ The <code>name</code> parameter is used later on to give each sample a unique na
 It can happen, that some datasets from sfaira are not (yet) ready for the automatic download, an error message will then appear in R, telling you which file to download and where to put it.<br></p>
 <p>If you wish to see all datasets which are included in sfaira you can use the following command:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">all_datasets</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/simulator/man/sfaira_overview.html">sfaira_overview</a></span><span class="op">(</span>setup_list <span class="op">=</span> <span class="va">setup_list</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">all_datasets</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/sfaira_overview.html">sfaira_overview</a></span><span class="op">(</span>setup_list <span class="op">=</span> <span class="va">setup_list</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">all_datasets</span><span class="op">)</span>
 <span class="co">#&gt;                                                                                          id</span>
 <span class="co">#&gt; 1:                            human_liver_2019_10x3v2_popescu_001_10.1038/s41586-019-1652-y</span>
@@ -191,7 +194,7 @@ It can happen, that some datasets from sfaira are not (yet) ready for the automa
 <a href="#simulate-pseudo-bulk-datasets" class="anchor"></a>Simulate pseudo bulk datasets</h2>
 <p>We are now ready to simulate the first pseudo bulk samples with the created dataset:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">simulation</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/simulator/man/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds_human_pancreas</span>,
+<code class="sourceCode R"><span class="va">simulation</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds_human_pancreas</span>,
                                        scenario <span class="op">=</span> <span class="st">"random"</span>, 
                                        scaling_factor <span class="op">=</span> <span class="st">"NONE"</span>, 
                                        ncells<span class="op">=</span><span class="fl">1000</span>, 
@@ -228,10 +231,11 @@ You can also control the number of cells per sample by using the <code>total_rea
 <a href="#results" class="anchor"></a>Results</h2>
 <p>The <code>simulation</code> object contains three named entries:<br></p>
 <ul>
-<li><p><code>pseudo_bulk_raw</code>: a sparse matrix with - in this case - 50 columns and about 60k rows (this is the number of features/genes). This is the simulated expression matrix.<br></p></li>
-<li><p><code>pseudo_bulk</code>: same as above, but CPM normalized samples.<br></p></li>
-<li><p><code>cell_fractions</code>: a dataframe with 50 rows and 15 columns (this is the number of cell-types). It gives the fractions for each cell-type in each sample.<br></p></li>
-<li><p><code>expression_set</code>: a Biobase <a href="https://rdrr.io/bioc/Biobase/man/class.ExpressionSet.html">ExpressionSet</a><br></p></li>
+<li><p><code>pseudo_bulk</code>: a sparse matrix with genes in rows and the simulated samples in columns. By default TPM normalized.<br></p></li>
+<li><p><code>pseudo_bulk_raw</code>: a sparse matrix, same dimensions as <code>pseudo_bulk</code>, but raw counts. Depending on the scaling factor method used, the distribution of these values can be shifted.<br></p></li>
+<li><p><code>cell_fractions</code>: a table where rows represent the simulated samples and columns represent the different simulated cell-types. The entries in the table store the specific cell-type fraction per sample.<br></p></li>
+<li><p><code>scaling_vector</code>: a named list, with the used scaling value for each cell from the single cell dataset.<br></p></li>
+<li><p><code>expression_set</code>: a Biobase <a href="https://rdrr.io/bioc/Biobase/man/class.ExpressionSet.html">ExpressionSet</a>, containing annotation data as well as the TPM normalized expression matrix.<br></p></li>
 </ul>
 <p>Finally here is a boxplot of the resulting simulation:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
@@ -269,7 +273,7 @@ You can also control the number of cells per sample by using the <code>total_rea
 <span class="va">annotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/fread.html">fread</a></span><span class="op">(</span><span class="st">"~/ma/data/Maynard/annotation_obs.csv"</span><span class="op">)</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Run"</span>,<span class="st">"cell_type"</span><span class="op">)</span><span class="op">]</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ID"</span>, <span class="st">"cell_type"</span><span class="op">)</span>
 
-<span class="va">dataset_file</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/simulator/man/dataset.html">dataset</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
+<span class="va">dataset_file</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
                                    count_matrix <span class="op">=</span> <span class="va">counts</span>,
                                    name<span class="op">=</span><span class="st">"Maynard"</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Filtering genes..."</span>
@@ -285,7 +289,7 @@ You can also control the number of cells per sample by using the <code>total_rea
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span> <span class="op">==</span> <span class="st">"free_annotation"</span><span class="op">)</span><span class="op">]</span><span class="op">&lt;-</span><span class="st">"cell_type"</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span> <span class="op">==</span> <span class="st">"index"</span><span class="op">)</span><span class="op">]</span><span class="op">&lt;-</span><span class="st">"ID"</span>
 
-<span class="va">dataset_h5ad</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/simulator/man/dataset_h5ad.html">dataset_h5ad</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
+<span class="va">dataset_h5ad</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_h5ad.html">dataset_h5ad</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
                                         h5ad_file <span class="op">=</span> <span class="va">h5ad_file</span>, 
                                         name <span class="op">=</span> <span class="st">"Travaglini"</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Filtering genes..."</span>
@@ -309,7 +313,7 @@ You can also control the number of cells per sample by using the <code>total_rea
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span> <span class="op">==</span> <span class="st">"free_annotation"</span><span class="op">)</span><span class="op">]</span><span class="op">&lt;-</span><span class="st">"cell_type"</span>
 <span class="va">annotation</span><span class="op">$</span><span class="va">ID</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span>
 
-<span class="va">dataset_seurat</span> <span class="op">&lt;-</span> <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/simulator/man/dataset_seurat.html">dataset_seurat</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
+<span class="va">dataset_seurat</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_seurat.html">dataset_seurat</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
                                             seurat_obj <span class="op">=</span> <span class="va">seurat_obj</span>,
                                             name<span class="op">=</span><span class="st">"TabulaMuris_Bladder"</span><span class="op">)</span>
 <span class="co">#&gt; [1] "Filtering genes..."</span>
@@ -347,7 +351,7 @@ You can also control the number of cells per sample by using the <code>total_rea
 <span class="co">#&gt; [1] 42</span></code></pre></div>
 <p>You can handle this issue during simulation using the <code>whitelist</code> parameter:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">simulation</span> <span class="op">&lt;-</span>  <span class="fu">simulator</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/simulator/man/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataset_file</span>,
+<code class="sourceCode R"><span class="va">simulation</span> <span class="op">&lt;-</span>  <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataset_file</span>,
                                         scenario <span class="op">=</span> <span class="st">"spike_in"</span>, 
                                         scaling_factor <span class="op">=</span> <span class="st">"NONE"</span>, 
                                         spike_in_cell_type <span class="op">=</span> <span class="st">"NK cell"</span>,
@@ -375,7 +379,7 @@ You can also control the number of cells per sample by using the <code>total_rea
 <p>It is possible to filter your dataset by variance and remove genes with only 0 expression values. Also low expressed cell-types can be removed.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
-<span class="va">ds_filtered</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation<span class="op">=</span><span class="va">annotation</span>,
+<span class="va">ds_filtered</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation<span class="op">=</span><span class="va">annotation</span>,
                        count_matrix <span class="op">=</span> <span class="va">count_matrix</span>,
                        name<span class="op">=</span><span class="st">"filter_test"</span>, 
                        type_abundance_cutoff<span class="op">=</span><span class="fl">10</span>, 
@@ -387,7 +391,7 @@ With <code>variance_cutoff</code> you can set a cutoff to remove all genes with 
 <p>The pseudo-bulk sample will be generated by aggregating the expression values from all sampled cells and is then normalized. The default aggregation method is <code>sum</code>, but you also have the options <code>mean</code> and <code>median</code>. You can select them like this:</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
-<span class="va">sim_aggregation</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">ds</span>,
+<span class="va">sim_aggregation</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">ds</span>,
                                  scenario<span class="op">=</span><span class="st">"random"</span>,
                                  scaling_factor<span class="op">=</span><span class="st">"NONE"</span>,
                                  sample_aggreation <span class="op">=</span> <span class="st">"median"</span>,  <span class="co"># use median as aggregation</span>

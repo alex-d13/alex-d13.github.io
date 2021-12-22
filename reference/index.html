@@ -97,6 +97,9 @@
       <a href="../articles/simulator_documentation.html">Getting started with the pseudo-bulk simulator R package</a>
     </li>
     <li>
+      <a href="../articles/simulator_input_output.html">Inputs &amp; Outputs</a>
+    </li>
+    <li>
       <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
     </li>
   </ul>
@@ -131,8 +134,8 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-dataset-generation" class="hasAnchor"><a href="#section-dataset-generation" class="anchor"></a>Dataset generation</h2>
+          <p class="section-desc"><p>Methods linked to generating the internal dataset object</p></p>
         </th>
       </tr>
       
@@ -141,30 +144,6 @@
       
       
       <tr>
-        
-        <td>
-          <p><code><a href="calc_scaling_vector.html">calc_scaling_vector()</a></code> </p>
-        </td>
-        <td><p>Calculate scaling factor for a dataset</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="census.html">census()</a></code> </p>
-        </td>
-        <td><p>applies the census count transformation on a count matrix</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="check_annotation.html">check_annotation()</a></code> </p>
-        </td>
-        <td><p>check for correct column names in annotation file and replace them if neccesary</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dataset-class.html">dataset-class</a></code> </p>
-        </td>
-        <td><p>class for a dataset</p></td>
-      </tr><tr>
         
         <td>
           <p><code><a href="dataset.html">dataset()</a></code> </p>
@@ -176,12 +155,6 @@
           <p><code><a href="dataset_h5ad.html">dataset_h5ad()</a></code> </p>
         </td>
         <td><p>constructor for a dataset using a h5ad file for the counts</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="dataset_multiple.html">dataset_multiple()</a></code> </p>
-        </td>
-        <td><p>constructor to merge multiple datasets into one</p></td>
       </tr><tr>
         
         <td>
@@ -200,18 +173,25 @@
           <p><code><a href="dataset_sfaira_multiple.html">dataset_sfaira_multiple()</a></code> </p>
         </td>
         <td><p>Build a dataset using multiple sfaira entries</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-simulation" class="hasAnchor"><a href="#section-simulation" class="anchor"></a>Simulation</h2>
+          <p class="section-desc"><p>Methods linked to simulating pseudo-bulk datasets</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
-          <p><code><a href="download_sfaira.html">download_sfaira()</a></code> </p>
+          <p><code><a href="simulate_bulk.html">simulate_bulk()</a></code> </p>
         </td>
-        <td><p>download a specific dataset from sfaira by an ID</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="download_sfaira_multiple.html">download_sfaira_multiple()</a></code> </p>
-        </td>
-        <td><p>download multiple datasets from sfaira using filters for organism, tissue and/or assay</p></td>
+        <td><p>simulate whole pseudo-bulk RNAseq dataset</p></td>
       </tr><tr>
         
         <td>
@@ -221,28 +201,23 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="plot_simulation.html">plot_simulation()</a></code> </p>
-        </td>
-        <td><p>Plot the cell-type fractions in your simulated dataset</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="sample_cells_by_read_depth.html">sample_cells_by_read_depth()</a></code> </p>
-        </td>
-        <td><p>Sample cells based of sequencing depth</p></td>
-      </tr><tr>
-        
-        <td>
           <p><code><a href="save_simulation.html">save_simulation()</a></code> </p>
         </td>
         <td><p>Save the expression matrix of a simulated pseudo-bulk dataset to a file</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="setup_sfaira.html">setup_sfaira()</a></code> </p>
-        </td>
-        <td><p>setup the sfaira package</p></td>
-      </tr><tr>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-other" class="hasAnchor"><a href="#section-other" class="anchor"></a>Other</h2>
+          <p class="section-desc"><p>Different methods</p></p>
+        </th>
+      </tr>
+      
+      
+    </tbody><tbody>
+      
+      
+      <tr>
         
         <td>
           <p><code><a href="sfaira_overview.html">sfaira_overview()</a></code> </p>
@@ -251,15 +226,9 @@
       </tr><tr>
         
         <td>
-          <p><code><a href="simulate_bulk.html">simulate_bulk()</a></code> </p>
+          <p><code><a href="plot_simulation.html">plot_simulation()</a></code> </p>
         </td>
-        <td><p>simulate whole pseudo-bulk RNAseq dataset</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="simulate_sample.html">simulate_sample()</a></code> </p>
-        </td>
-        <td><p>simulate single pseudo-bulk sample</p></td>
+        <td><p>Plot the cell-type fractions in your simulated dataset</p></td>
       </tr>
     </tbody>
     </table>

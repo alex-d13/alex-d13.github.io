@@ -100,6 +100,9 @@ scaling_factor on how the read counts will be transformed proir to the simulatio
       <a href="../articles/simulator_documentation.html">Getting started with the pseudo-bulk simulator R package</a>
     </li>
     <li>
+      <a href="../articles/simulator_input_output.html">Inputs &amp; Outputs</a>
+    </li>
+    <li>
       <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
     </li>
   </ul>
@@ -142,7 +145,7 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
   custom_scenario_data <span class='op'>=</span> <span class='cn'>NULL</span>,
   custom_scaling_vector <span class='op'>=</span> <span class='cn'>NULL</span>,
   balance_unique_mirror_scenario <span class='op'>=</span> <span class='fl'>0.01</span>,
-  sample_aggreation <span class='op'>=</span> <span class='st'>"sum"</span>,
+  sample_aggregation <span class='op'>=</span> <span class='st'>"sum"</span>,
   nsamples <span class='op'>=</span> <span class='fl'>100</span>,
   ncells <span class='op'>=</span> <span class='fl'>1000</span>,
   total_read_counts <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -191,7 +194,7 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
       <td><p>balancing value for the <code>uniform</code> and <code>mirror_db</code> scenarios: increasing it will result in more diverse simulated fractions. To get the same fractions in each sample, set to 0. Default is 0.01.</p></td>
     </tr>
     <tr>
-      <th>sample_aggreation</th>
+      <th>sample_aggregation</th>
       <td><p>aggregation method on how to generate a sample; possible are: <code>sum</code>(default), <code>mean</code>, <code>median</code></p></td>
     </tr>
     <tr>
