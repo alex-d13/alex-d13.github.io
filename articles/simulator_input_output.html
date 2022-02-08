@@ -96,13 +96,13 @@
 <div class="section level2">
 <h2 id="input">Input<a class="anchor" aria-label="anchor" href="#input"></a>
 </h2>
-<p>The input for your simulations is always the custom <code>dataset</code> object. You can create this object with different constructing functions, which will explained below. It is also possible to merge multiple <code>dataset</code> objects into one.<br>
+<p>The input for your simulations is always a <code>SummarizedExperiment</code> object. You can create this object with different constructing functions, which will explained below. It is also possible to merge multiple datasets objects into one.<br>
 Sfaira is not covered in this vignette, but in <a href="sfaira_vignette.Rmd">“Public Data Integration”</a>.<br></p>
 <div class="section level3">
 <h3 id="custom-data">Custom data<a class="anchor" aria-label="anchor" href="#custom-data"></a>
 </h3>
 <p>Using existing count matrices and annotations is already covered in the <a href="simulator_documentation.Rmd">“Getting started”</a> vignette; this section will explain some minor details.<br></p>
-<p>When generating a dataset with your own data, you need to provide at least one matrix via either the <code>count_matrix</code> or <code>tpm_matrix</code> parameter of <code><a href="../reference/dataset.html">dataset()</a></code>; for both of them, genes are located in the rows, cells in the columns.<br>
+<p>When generating a dataset with your own data, you need to provide the <code>count_matrix</code> parameter of <code><a href="../reference/dataset.html">dataset()</a></code>; additionally you can provide a TPM matrix with the <code>tpm_matrix</code>. This will then lead to two simulations, one based on counts and one based on TPMs. For either of them, genes are located in the rows, cells in the columns.<br>
 Additionally, an annotation table is needed, with the cell-type annotations. It needs to consist of at least out of 2 columns: <code>ID</code> and <code>cell_type</code>, where <code>ID</code> has to be identical to the column names of the provides matrix/matrices. If not all cells appear in the annotation or matrix, the intersection of both is used to generate the dataset.<br></p>
 <div class="section level4">
 <h4 id="seurat">Seurat<a class="anchor" aria-label="anchor" href="#seurat"></a>
@@ -155,7 +155,7 @@ Similar to datasets, it is also possible to merge simulations:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">assays</span><span class="op">(</span><span class="va">simulation</span><span class="op">$</span><span class="va">bulk</span><span class="op">)</span><span class="op">[[</span><span class="st">"bulk_counts"</span><span class="op">]</span><span class="op">]</span>
 <span class="fu">assays</span><span class="op">(</span><span class="va">simulation</span><span class="op">$</span><span class="va">bulk</span><span class="op">)</span><span class="op">[[</span><span class="st">"bulk_tpm"</span><span class="op">]</span><span class="op">]</span></code></pre></div>
-<p>If only a single matrix was given to the dataset initially, only one assay is filled.</p>
+<p>If only the count matrix was given to the dataset initially, only the <code>bulk_counts</code> assay is filled.</p>
 <ul>
 <li><p><code>cell_fractions</code>: a table where rows represent the simulated samples and columns represent the different simulated cell-types. The entries in the table store the specific cell-type fraction per sample.<br></p></li>
 <li><p><code>scaling_vector</code>: a named list, with the used scaling value for each cell from the single cell dataset.<br></p></li>
