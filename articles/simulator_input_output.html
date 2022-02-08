@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">SimBu</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -60,6 +56,9 @@
       <a href="../articles/simulator_input_output.html">Inputs &amp; Outputs</a>
     </li>
     <li>
+      <a href="../articles/sfaira_vignette.html">Public Data Integration using Sfaira</a>
+    </li>
+    <li>
       <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
     </li>
   </ul>
@@ -75,11 +74,11 @@
 
       
 
-      </header><script src="simulator_input_output_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Inputs &amp; Outputs</h1>
-                        <h4 class="author">Alexander Dietrich</h4>
+                        <h4 data-toc-skip class="author">Alexander Dietrich</h4>
             
       
       
@@ -90,87 +89,76 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">SimBu</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat">Seurat</a></span><span class="op">)</span>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SimBu</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat" class="external-link">Seurat</a></span><span class="op">)</span>
 <span class="co">#&gt; Attaching SeuratObject</span></code></pre></div>
 <p>This chapter covers the different input and output options of the package in detail.</p>
-<div id="input" class="section level1">
-<h1 class="hasAnchor">
-<a href="#input" class="anchor"></a>Input</h1>
-<p>The input for your simulations is always the custom <code>dataset</code> object. You can create this object with different constructing functions, which will explained below. It is also possible to merge multiple <code>dataset</code> objects into one.</p>
-<div id="sfaira" class="section level2">
-<h2 class="hasAnchor">
-<a href="#sfaira" class="anchor"></a>Sfaira</h2>
-<p>To use the public database sfaira, you first need to setup a connection to it. To do so, follow the steps in the “Getting started” vignette. You can now use the <code>dataset_sfaira_multiple</code> or <code>dataset_sfaira</code> to create a <code>dataset</code> object like this:</p>
+<div class="section level2">
+<h2 id="input">Input<a class="anchor" aria-label="anchor" href="#input"></a>
+</h2>
+<p>The input for your simulations is always the custom <code>dataset</code> object. You can create this object with different constructing functions, which will explained below. It is also possible to merge multiple <code>dataset</code> objects into one.<br>
+Sfaira is not covered in this vignette, but in <a href="sfaira_vignette.Rmd">“Public Data Integration”</a>.<br></p>
+<div class="section level3">
+<h3 id="custom-data">Custom data<a class="anchor" aria-label="anchor" href="#custom-data"></a>
+</h3>
+<p>Using existing count matrices and annotations is already covered in the <a href="simulator_documentation.Rmd">“Getting started”</a> vignette; this section will explain some minor details.<br></p>
+<p>When generating a dataset with your own data, you need to provide at least one matrix via either the <code>count_matrix</code> or <code>tpm_matrix</code> parameter of <code><a href="../reference/dataset.html">dataset()</a></code>; for both of them, genes are located in the rows, cells in the columns.<br>
+Additionally, an annotation table is needed, with the cell-type annotations. It needs to consist of at least out of 2 columns: <code>ID</code> and <code>cell_type</code>, where <code>ID</code> has to be identical to the column names of the provides matrix/matrices. If not all cells appear in the annotation or matrix, the intersection of both is used to generate the dataset.<br></p>
+<div class="section level4">
+<h4 id="seurat">Seurat<a class="anchor" aria-label="anchor" href="#seurat"></a>
+</h4>
+<p>It is possible to use a Seurat object to build a dataset; you need an additional dataframe for the annotation:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ds_human_pancreas</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_sfaira_multiple.html">dataset_sfaira_multiple</a></span><span class="op">(</span>sfaira_setup <span class="op">=</span> <span class="va">setup_list</span>,
-                                                    organisms <span class="op">=</span> <span class="st">"human"</span>, 
-                                                    tissues <span class="op">=</span> <span class="st">"pancreas"</span>, 
-                                                    name<span class="op">=</span><span class="st">"human_pancreas"</span><span class="op">)</span>
-
-<span class="va">ds_miller</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_sfaira.html">dataset_sfaira</a></span><span class="op">(</span>sfaira_setup <span class="op">=</span> <span class="va">setup_list</span>,
-                                   sfaira_id<span class="op">=</span><span class="st">"human_lung_2020_10x3v2_miller_001_10.1016/j.devcel.2020.01.033"</span>,
-                                   name <span class="op">=</span> <span class="st">"Miller"</span><span class="op">)</span></code></pre></div>
-<p>As you can see, <code>dataset_sfaira_multiple</code> allows to download multiple datasets of the same organism, tissue or assay; with <code>dataset_sfaira</code> you can access a single dataset directly. You can use the <code>sfaira_overview</code> function to find a table of all possible datasets as well as their IDs.</p>
-</div>
-<div id="custom-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#custom-data" class="anchor"></a>Custom data</h2>
-<p>When building <code>dataset</code> objects with your own data, you need to provide a count matrix with the genes in rows and cells in columns. Additionally, an annotation table is needed, with the cell-type annotations. It needs to consist at least out of 2 columns: <code>ID</code> and <code>cell_type</code>, where <code>ID</code> has to be identical to the column names of the count matrix. If not all cells appear in the annotation or count matrix, the intersection of both is used to build the <code>dataset</code>.<br>
-Additionally, the name of the dataset has to be given.<br>
-The straight forward approach can be executed like this:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ds_basic</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>count_matrix <span class="op">=</span> <span class="va">count_matrix</span>,
-                           annotation <span class="op">=</span> <span class="va">annotaton</span>,
-                           name <span class="op">=</span> <span class="st">"basic_dataset"</span><span class="op">)</span></code></pre></div>
-<div id="seurat" class="section level3">
-<h3 class="hasAnchor">
-<a href="#seurat" class="anchor"></a>Seurat</h3>
-<p>It is possible to use a Seurat object to build a <code>dataset</code>; you need an additional dataframe for the annotation:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ds_seurat</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_seurat.html">dataset_seurat</a></span><span class="op">(</span>seurat_obj <span class="op">=</span> <span class="va">seurat_object</span>,
+<code class="sourceCode R"><span class="va">ds_seurat</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_seurat.html">dataset_seurat</a></span><span class="op">(</span>seurat_obj_counts <span class="op">=</span> <span class="va">seurat_object_counts</span>,
+                                   seurat_obj_tpm <span class="op">=</span> <span class="va">seurat_object_tpm</span>,
                                    annotation <span class="op">=</span> <span class="va">annotation</span>,
                                    name <span class="op">=</span> <span class="st">"seurat_dataset"</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="h5ad-files" class="section level3">
-<h3 class="hasAnchor">
-<a href="#h5ad-files" class="anchor"></a>h5ad files</h3>
-<p>It is possible to use an h5ad file directly, a file format which stores <a href="https://anndata.readthedocs.io/en/latest/">AnnData</a> objects; again you need an additional dataframe for the annotation:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="section level4">
+<h4 id="h5ad-files">h5ad files<a class="anchor" aria-label="anchor" href="#h5ad-files"></a>
+</h4>
+<p>It is possible to use an h5ad file directly, a file format which stores <a href="https://anndata.readthedocs.io/en/latest/" class="external-link">AnnData</a> objects; again you need an additional dataframe for the annotation:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
-<span class="va">ds_h5ad</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_h5ad.html">dataset_h5ad</a></span><span class="op">(</span>h5ad_file <span class="op">=</span> <span class="va">h5ad_file_path</span>,
+<span class="va">ds_h5ad</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_h5ad.html">dataset_h5ad</a></span><span class="op">(</span>h5ad_file_counts <span class="op">=</span> <span class="va">h5ad_file_counts</span>,
+                               h5ad_file_tpm <span class="op">=</span> <span class="va">h5ad_file_tpm</span>,
                                annotation <span class="op">=</span> <span class="va">annotation</span>,
                                name <span class="op">=</span> <span class="st">"h5ad_dataset"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="merging-datasets" class="section level2">
-<h2 class="hasAnchor">
-<a href="#merging-datasets" class="anchor"></a>Merging datasets</h2>
-<p>You are able to merge multiple datasets by using the <code>dataset_multiple</code> function:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="section level3">
+<h3 id="merging-datasets">Merging datasets<a class="anchor" aria-label="anchor" href="#merging-datasets"></a>
+</h3>
+<p>You are able to merge multiple datasets by using the <code>dataset_merge</code> function:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
-<span class="va">ds_multiple</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_multiple.html">dataset_multiple</a></span><span class="op">(</span>dataset_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">ds_1</span>, <span class="va">ds_2</span>, <span class="va">ds_3</span><span class="op">)</span>,
-                                       name <span class="op">=</span> <span class="st">"ds_multiple"</span><span class="op">)</span></code></pre></div>
+<span class="va">ds_multiple</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_merge.html">dataset_merge</a></span><span class="op">(</span>dataset_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">ds_1</span>, <span class="va">ds_2</span>, <span class="va">ds_3</span><span class="op">)</span>,
+                                    name <span class="op">=</span> <span class="st">"ds_multiple"</span><span class="op">)</span></code></pre></div>
 </div>
 </div>
-<div id="simulations" class="section level1">
-<h1 class="hasAnchor">
-<a href="#simulations" class="anchor"></a>Simulations</h1>
-<p>Once the <code>dataset</code> is generated, you can use <code>simulate_bulk</code> to generate pseudo-bulk samples, resulting in an artificial RNA-seq dataset.<br>
+<div class="section level2">
+<h2 id="simulations">Simulations<a class="anchor" aria-label="anchor" href="#simulations"></a>
+</h2>
+<p>Once a dataset is generated, you can use <code>simulate_bulk</code> to generate pseudo-bulk samples, resulting in an artificial RNA-seq dataset.<br>
 Similar to datasets, it is also possible to merge simulations:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">merged_simulations</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/merge_simulations.html">merge_simulations</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">sim_1</span>, <span class="va">sim_2</span>, <span class="va">sim_3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">merged_simulations</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/merge_simulations.html">merge_simulations</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">sim_1</span>, <span class="va">sim_2</span>, <span class="va">sim_3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
-<div id="output" class="section level1">
-<h1 class="hasAnchor">
-<a href="#output" class="anchor"></a>Output</h1>
-<p>The output of this function is a named list with 5 entries:</p>
+<div class="section level2">
+<h2 id="output">Output<a class="anchor" aria-label="anchor" href="#output"></a>
+</h2>
+<p>The <code>simulation</code> object contains three named entries:<br></p>
 <ul>
-<li><p><code>pseudo_bulk</code>: a sparse matrix with genes in rows and the simulated samples in columns. By default TPM normalized.<br></p></li>
-<li><p><code>pseudo_bulk_raw</code>: a sparse matrix, same dimensions as <code>pseudo_bulk</code>, but raw counts. Depending on the scaling factor method used, the distribution of these values can be shifted.<br></p></li>
+<li>
+<code>bulk</code>: a SummarizedExperiment object with the pseudo-bulk dataset(s) stored in the <code>assays</code>. They can be accessed like this:</li>
+</ul>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu">assays</span><span class="op">(</span><span class="va">simulation</span><span class="op">$</span><span class="va">bulk</span><span class="op">)</span><span class="op">[[</span><span class="st">"bulk_counts"</span><span class="op">]</span><span class="op">]</span>
+<span class="fu">assays</span><span class="op">(</span><span class="va">simulation</span><span class="op">$</span><span class="va">bulk</span><span class="op">)</span><span class="op">[[</span><span class="st">"bulk_tpm"</span><span class="op">]</span><span class="op">]</span></code></pre></div>
+<p>If only a single matrix was given to the dataset initially, only one assay is filled.</p>
+<ul>
 <li><p><code>cell_fractions</code>: a table where rows represent the simulated samples and columns represent the different simulated cell-types. The entries in the table store the specific cell-type fraction per sample.<br></p></li>
 <li><p><code>scaling_vector</code>: a named list, with the used scaling value for each cell from the single cell dataset.<br></p></li>
-<li><p><code>expression_set</code>: a Biobase <a href="https://rdrr.io/bioc/Biobase/man/class.ExpressionSet.html">ExpressionSet</a>, containing annotation data as well as the TPM normalized expression matrix.<br></p></li>
 </ul>
 </div>
   </div>
@@ -186,11 +174,13 @@ Similar to datasets, it is also possible to merge simulations:</p>
 
 
       <footer><div class="copyright">
-  <p>Developed by Alexander Dietrich.</p>
+  <p></p>
+<p>Developed by Alexander Dietrich.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -198,6 +188,8 @@ Similar to datasets, it is also possible to merge simulations:</p>
 
   
 
+
+  
 
   </body>
 </html>
