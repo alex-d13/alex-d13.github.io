@@ -90,7 +90,11 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SimBu</span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://Matrix.R-forge.R-project.org/" class="external-link">Matrix</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat" class="external-link">Seurat</a></span><span class="op">)</span>
+<span class="co">#&gt; Registered S3 method overwritten by 'spatstat.geom':</span>
+<span class="co">#&gt;   method     from</span>
+<span class="co">#&gt;   print.boxx cli</span>
 <span class="co">#&gt; Attaching SeuratObject</span></code></pre></div>
 <p>This chapter covers the different input and output options of the package in detail.</p>
 <div class="section level2">
@@ -107,11 +111,13 @@ Additionally, an annotation table is needed, with the cell-type annotations. It 
 <div class="section level4">
 <h4 id="seurat">Seurat<a class="anchor" aria-label="anchor" href="#seurat"></a>
 </h4>
-<p>It is possible to use a Seurat object to build a dataset; you need an additional dataframe for the annotation:</p>
+<p>It is possible to use a Seurat object to build a dataset; give the name of the assay containing count data in the <code>counts</code> slot, the name of the column in the meta table with the unique cell IDs and the name of the column in the meta table with the cell type identifier. Additionally you may give the name of the assay containing TPM data in the <code>counts</code> slot.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ds_seurat</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_seurat.html">dataset_seurat</a></span><span class="op">(</span>seurat_obj_counts <span class="op">=</span> <span class="va">seurat_object_counts</span>,
-                                   seurat_obj_tpm <span class="op">=</span> <span class="va">seurat_object_tpm</span>,
-                                   annotation <span class="op">=</span> <span class="va">annotation</span>,
+<code class="sourceCode R"><span class="va">ds_seurat</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_seurat.html">dataset_seurat</a></span><span class="op">(</span>seurat_obj <span class="op">=</span> <span class="va">seurat_obj</span>, 
+                                   count_assay <span class="op">=</span> <span class="st">"RNA"</span>, 
+                                   cell_id_col <span class="op">=</span> <span class="st">'orig.ident'</span>, 
+                                   cell_type_col <span class="op">=</span> <span class="st">'ct'</span>, 
+                                   tpm_assay <span class="op">=</span> <span class="st">'TPM'</span>,
                                    name <span class="op">=</span> <span class="st">"seurat_dataset"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level4">

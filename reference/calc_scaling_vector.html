@@ -63,7 +63,13 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">calc_scaling_vector</span><span class="op">(</span><span class="va">data</span>, <span class="va">scaling_factor</span>, <span class="va">custom_scaling_vector</span>, <span class="va">ncores</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">calc_scaling_vector</span><span class="op">(</span>
+  <span class="va">data</span>,
+  <span class="va">scaling_factor</span>,
+  <span class="va">custom_scaling_vector</span>,
+  <span class="va">scaling_factor_single_cell</span>,
+  <span class="va">ncores</span>
+<span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -71,7 +77,7 @@
     <dl><dt>data</dt>
 <dd><p>dataset object</p></dd>
 <dt>scaling_factor</dt>
-<dd><p>name of scaling factor; possible are: <code>census</code>, <code>spike-in</code>, <code>read-number</code>, <code>custom</code> or <code>NONE</code> for no scaling factor</p></dd>
+<dd><p>name of scaling factor; possible are: <code>census</code>, <code>spike_in</code>, <code>read_number</code>, <code>custom</code> or <code>NONE</code> for no scaling factor</p></dd>
 <dt>custom_scaling_vector</dt>
 <dd><p>named vector with custom scaling values for cell-types. Cell-types that do not occur in this vector but are present in the dataset will be set to 1</p></dd>
 <dt>ncores</dt>

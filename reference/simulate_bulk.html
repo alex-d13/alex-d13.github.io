@@ -69,15 +69,19 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">simulate_bulk</span><span class="op">(</span>
   <span class="va">data</span>,
-  scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"uniform"</span>, <span class="st">"random"</span>, <span class="st">"mirror_db"</span>, <span class="st">"spike_in"</span>, <span class="st">"unique"</span>, <span class="st">"custom"</span><span class="op">)</span>,
-  scaling_factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NONE"</span>, <span class="st">"census"</span>, <span class="st">"spike-in"</span>, <span class="st">"custom"</span>, <span class="st">"read-number"</span>,
-    <span class="st">"annotation_column"</span><span class="op">)</span>,
-  spike_in_cell_type <span class="op">=</span> <span class="cn">NULL</span>,
-  spike_in_amount <span class="op">=</span> <span class="cn">NULL</span>,
+  scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"even"</span>, <span class="st">"random"</span>, <span class="st">"mirror_db"</span>, <span class="st">"controlled"</span>, <span class="st">"unique"</span>, <span class="st">"custom"</span><span class="op">)</span>,
+  scaling_factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NONE"</span>, <span class="st">"census"</span>, <span class="st">"spike_in"</span>, <span class="st">"custom"</span>, <span class="st">"read_number"</span>,
+    <span class="st">"expressed_genes"</span>, <span class="st">"annotation_column"</span><span class="op">)</span>,
+  scaling_factor_single_cell <span class="op">=</span> <span class="cn">TRUE</span>,
+  controlled_cell_type <span class="op">=</span> <span class="cn">NULL</span>,
+  controlled_amount <span class="op">=</span> <span class="cn">NULL</span>,
   unique_cell_type <span class="op">=</span> <span class="cn">NULL</span>,
   custom_scenario_data <span class="op">=</span> <span class="cn">NULL</span>,
   custom_scaling_vector <span class="op">=</span> <span class="cn">NULL</span>,
   balance_uniform_mirror_scenario <span class="op">=</span> <span class="fl">0.01</span>,
+  remove_bias_in_counts <span class="op">=</span> <span class="cn">TRUE</span>,
+  remove_bias_in_counts_method <span class="op">=</span> <span class="st">"read-number"</span>,
+  norm_counts <span class="op">=</span> <span class="cn">TRUE</span>,
   nsamples <span class="op">=</span> <span class="fl">100</span>,
   ncells <span class="op">=</span> <span class="fl">1000</span>,
   total_read_counts <span class="op">=</span> <span class="cn">NULL</span>,
@@ -90,15 +94,17 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>data</dt>
-<dd><p><a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a> object</p></dd>
+<dd><p>(mandatory) <a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a> object</p></dd>
 <dt>scenario</dt>
-<dd><p>select on of the pre-defined cell-type fraction scenarios; possible are: <code>uniform</code>,<code>random</code>,<code>mirror_db</code>,<code>unique</code>,<code>spike_in</code>; you can also use the <code>custom</code> scenario, where you need to set the <code>custom_scenario_data</code> parameter.</p></dd>
+<dd><p>(mandatory) select on of the pre-defined cell-type fraction scenarios; possible are: <code>even</code>,<code>random</code>,<code>mirror_db</code>,<code>unique</code>,<code>controlled</code>; you can also use the <code>custom</code> scenario, where you need to set the <code>custom_scenario_data</code> parameter.</p></dd>
 <dt>scaling_factor</dt>
-<dd><p>name of scaling factor; possible are: <code>census</code>, <code>spike-in</code>, <code>read-number</code>, <code>custom</code> or <code>NONE</code> for no scaling factor</p></dd>
-<dt>spike_in_cell_type</dt>
-<dd><p>name of cell-type used for <code>spike-in</code> scenario</p></dd>
-<dt>spike_in_amount</dt>
-<dd><p>fraction of cell-type used for <code>spike-in</code> scenario; must be between <code>0</code> and <code>0.99</code></p></dd>
+<dd><p>(mandatory) name of scaling factor; possible are: <code>census</code>, <code>spike_in</code>, <code>read_number</code>, <code>expressed_genes</code>, <code>custom</code> or <code>NONE</code> for no scaling factor</p></dd>
+<dt>scaling_factor_single_cell</dt>
+<dd><p>boolean: decide if a scaling value for each single cell is calculated (default) or the median of all scaling values for each cell type is calculated</p></dd>
+<dt>controlled_cell_type</dt>
+<dd><p>name of cell-type used for <code>controlled</code> scenario</p></dd>
+<dt>controlled_amount</dt>
+<dd><p>fraction of cell-type used for <code>controlled</code> scenario; must be between <code>0</code> and <code>0.99</code></p></dd>
 <dt>unique_cell_type</dt>
 <dd><p>name of cell-type for <code>unique</code> scenario</p></dd>
 <dt>custom_scenario_data</dt>
@@ -107,10 +113,16 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
 <dd><p>named vector with custom scaling values for cell-types. Cell-types that do not occur in this vector but are present in the dataset will be set to 1; mandatory for <code>custom</code> scaling factor</p></dd>
 <dt>balance_uniform_mirror_scenario</dt>
 <dd><p>balancing value for the <code>uniform</code> and <code>mirror_db</code> scenarios: increasing it will result in more diverse simulated fractions. To get the same fractions in each sample, set to 0. Default is 0.01.</p></dd>
+<dt>remove_bias_in_counts</dt>
+<dd><p>boolean; if TRUE (default) the internal mRNA bias that is present in count data will be <em>removed</em> using the number of reads mapped to each cell</p></dd>
+<dt>remove_bias_in_counts_method</dt>
+<dd><p>'read-number' (default) or 'gene-number'; method with which the mRNA bias in counts will be removed</p></dd>
+<dt>norm_counts</dt>
+<dd><p>boolean; if TRUE (default) the samples simulated with counts will be normalized to CPMs</p></dd>
 <dt>nsamples</dt>
-<dd><p>numeric; number of samples in pseudo-bulk RNAseq dataset</p></dd>
+<dd><p>numeric; number of samples in pseudo-bulk RNAseq dataset (default = 100)</p></dd>
 <dt>ncells</dt>
-<dd><p>numeric; number of cells in each dataset</p></dd>
+<dd><p>numeric; number of cells in each dataset (default = 1000)</p></dd>
 <dt>total_read_counts</dt>
 <dd><p>numeric; sets the total read count value for each sample</p></dd>
 <dt>whitelist</dt>
@@ -118,7 +130,7 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
 <dt>blacklist</dt>
 <dd><p>list; give a list of cell-types you want to remove for the simulation; if NULL, all are used; is applied after whitelist</p></dd>
 <dt>ncores</dt>
-<dd><p>numeric; number of cores to use</p></dd>
+<dd><p>numeric; number of cores to use (default = 1)</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -130,22 +142,68 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span class="r-in"><span class="co"># this creates a basic dataset with uniform cell-type distribution and no additional transformation of the data with 10 samples and 2000 cells each</span></span>
-<span class="r-in"><span class="fu">simulate_bulk</span><span class="op">(</span><span class="va">dataset</span>, scenario<span class="op">=</span><span class="st">"uniform"</span>, scaling_factor<span class="op">=</span><span class="st">"NONE"</span>, nsamples<span class="op">=</span><span class="fl">10</span>, ncells<span class="op">=</span><span class="fl">2000</span><span class="op">)</span></span>
+<span class="r-in"><span class="co">#generate sample single-cell data to work with:</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># use the spike-in scenario to have 50% B cells per sample</span></span>
-<span class="r-in"><span class="fu">simulate_bulk</span><span class="op">(</span><span class="va">dataset</span>, scenario<span class="op">=</span><span class="st">"spike_in"</span>, scaling_factor<span class="op">=</span><span class="st">"NONE"</span>, nsamples<span class="op">=</span><span class="fl">10</span>, ncells<span class="op">=</span><span class="fl">2000</span>, spike_in_cell_type<span class="op">=</span><span class="st">"Bcell"</span>, spike_in_amount<span class="op">=</span><span class="fl">0.5</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/Matrix.html" class="external-link">Matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fl">3e5</span>, <span class="fl">5</span><span class="op">)</span>, ncol<span class="op">=</span><span class="fl">300</span><span class="op">)</span>, sparse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">tpm</span> <span class="op">&lt;-</span> <span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/Matrix.html" class="external-link">Matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fl">3e5</span>, <span class="fl">5</span><span class="op">)</span>, ncol<span class="op">=</span><span class="fl">300</span><span class="op">)</span>, sparse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">tpm</span> <span class="op">&lt;-</span> <span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="fl">1e6</span><span class="op">*</span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="va">tpm</span><span class="op">)</span><span class="op">/</span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">tpm</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># use the unique scenario to only have B cells</span></span>
-<span class="r-in"><span class="fu">simulate_bulk</span><span class="op">(</span><span class="va">dataset</span>, scenario<span class="op">=</span><span class="st">"unique"</span>, scaling_factor<span class="op">=</span><span class="st">"NONE"</span>, nsamples<span class="op">=</span><span class="fl">10</span>, ncells<span class="op">=</span><span class="fl">2000</span>, unique_cell_type<span class="op">=</span><span class="st">"Bcell"</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"cell_"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">tpm</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"cell_"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"gene_"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tpm</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"gene_"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span></span>
 <span class="r-in"></span>
-<span class="r-in"><span class="co"># simulate a dataset with custom cell-type fraction for each of the 3 samples</span></span>
-<span class="r-in"><span class="va">fractions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">"Bcell"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>,<span class="fl">0.4</span>,<span class="fl">0.2</span><span class="op">)</span>,<span class="st">"Tcell"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="fl">0.1</span><span class="op">)</span>,<span class="st">"Macrophage"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>,<span class="fl">0.4</span>,<span class="fl">0.7</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">simulate_bulk</span><span class="op">(</span><span class="va">dataset</span>, scenario<span class="op">=</span><span class="st">"custom"</span>, scaling_factor<span class="op">=</span><span class="st">"NONE"</span>, nsamples<span class="op">=</span><span class="fl">3</span>, ncells<span class="op">=</span><span class="fl">2000</span>, custom_scenario_data<span class="op">=</span><span class="va">fractions</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">annotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">"ID"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"cell_"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">)</span>,</span>
+<span class="r-in">                         <span class="st">"cell_type"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"T cells CD4"</span>,<span class="fl">50</span><span class="op">)</span>,</span>
+<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"T cells CD8"</span>,<span class="fl">50</span><span class="op">)</span>,</span>
+<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Macrophages"</span>,<span class="fl">100</span><span class="op">)</span>,</span>
+<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"NK cells"</span>,<span class="fl">10</span><span class="op">)</span>,</span>
+<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"B cells"</span>,<span class="fl">70</span><span class="op">)</span>,</span>
+<span class="r-in">                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Monocytes"</span>,<span class="fl">20</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">dataset</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="dataset.html">dataset</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,</span>
+<span class="r-in">                          count_matrix <span class="op">=</span> <span class="va">counts</span>,</span>
+<span class="r-in">                          tpm_matrix <span class="op">=</span> <span class="va">tpm</span>,</span>
+<span class="r-in">                          name <span class="op">=</span> <span class="st">"test_dataset"</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># this creates a basic pseudo-bulk dataset with uniform cell-type distribution</span></span>
+<span class="r-in"><span class="co"># and no additional transformation of the data with 10 samples and 2000 cells each</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="va">s</span><span class="op">&lt;-</span><span class="fu">simulate_bulk</span><span class="op">(</span><span class="va">dataset</span>,</span>
+<span class="r-in">              scenario<span class="op">=</span><span class="st">"even"</span>,</span>
+<span class="r-in">              scaling_factor<span class="op">=</span><span class="st">"NONE"</span>,</span>
+<span class="r-in">              nsamples<span class="op">=</span><span class="fl">10</span>,</span>
+<span class="r-in">              ncells<span class="op">=</span><span class="fl">100</span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># use a blacklist to exclude certain cell-types for the simulation</span></span>
-<span class="r-in"><span class="fu">simulate_bulk</span><span class="op">(</span><span class="va">dataset</span>, scenario<span class="op">=</span><span class="st">"custom"</span>, scaling_factor<span class="op">=</span><span class="st">"NONE"</span>, nsamples<span class="op">=</span><span class="fl">3</span>, ncells<span class="op">=</span><span class="fl">2000</span>, custom_scenario_data<span class="op">=</span><span class="va">fractions</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">s</span><span class="op">&lt;-</span><span class="fu">simulate_bulk</span><span class="op">(</span><span class="va">dataset</span>,</span>
+<span class="r-in">              scenario<span class="op">=</span><span class="st">"even"</span>,</span>
+<span class="r-in">              scaling_factor<span class="op">=</span><span class="st">"NONE"</span>,</span>
+<span class="r-in">              nsamples<span class="op">=</span><span class="fl">10</span>,</span>
+<span class="r-in">              ncells<span class="op">=</span><span class="fl">2000</span>,</span>
+<span class="r-in">              blacklist<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Monocytes"</span>,<span class="st">"Macrophages"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># use the unique scenario to only have B cells</span></span>
+<span class="r-in"><span class="va">s</span><span class="op">&lt;-</span><span class="fu">simulate_bulk</span><span class="op">(</span><span class="va">dataset</span>,</span>
+<span class="r-in">              scenario<span class="op">=</span><span class="st">"unique"</span>,</span>
+<span class="r-in">              scaling_factor<span class="op">=</span><span class="st">"NONE"</span>,</span>
+<span class="r-in">              nsamples<span class="op">=</span><span class="fl">10</span>,</span>
+<span class="r-in">              ncells<span class="op">=</span><span class="fl">100</span>,</span>
+<span class="r-in">              unique_cell_type<span class="op">=</span><span class="st">"B cells"</span><span class="op">)</span></span>
+<span class="r-in"></span>
+<span class="r-in"><span class="co"># simulate a dataset with custom cell-type fraction for each of the 3 samples</span></span>
+<span class="r-in"><span class="va">fractions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">"B cells"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.2</span>,<span class="fl">0.4</span>,<span class="fl">0.2</span><span class="op">)</span>,</span>
+<span class="r-in">                        <span class="st">"T cells CD4"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>,<span class="fl">0.2</span>,<span class="fl">0.1</span><span class="op">)</span>,</span>
+<span class="r-in">                        <span class="st">"Macrophages"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.4</span>,<span class="fl">0.4</span>,<span class="fl">0.7</span><span class="op">)</span>, check.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span class="r-in"><span class="va">s</span><span class="op">&lt;-</span><span class="fu">simulate_bulk</span><span class="op">(</span><span class="va">dataset</span>,</span>
+<span class="r-in">              scenario<span class="op">=</span><span class="st">"custom"</span>,</span>
+<span class="r-in">              scaling_factor<span class="op">=</span><span class="st">"NONE"</span>,</span>
+<span class="r-in">              nsamples<span class="op">=</span><span class="fl">3</span>,</span>
+<span class="r-in">              ncells<span class="op">=</span><span class="fl">2000</span>,</span>
+<span class="r-in">              custom_scenario_data<span class="op">=</span><span class="va">fractions</span><span class="op">)</span></span>
 <span class="r-in"><span class="op">}</span></span>
+<span class="r-in"></span>
 </code></pre></div>
     </div>
   </div>

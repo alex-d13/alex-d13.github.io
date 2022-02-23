@@ -73,6 +73,9 @@ Note: if total_read_counts is used, the cell-fractions are applied to the number
   <span class="va">simulation_vector</span>,
   <span class="va">total_cells</span>,
   <span class="va">total_read_counts</span>,
+  <span class="va">remove_bias_in_counts</span>,
+  <span class="va">remove_bias_in_counts_method</span>,
+  <span class="va">norm_counts</span>,
   <span class="va">ncores</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -89,6 +92,12 @@ Note: if total_read_counts is used, the cell-fractions are applied to the number
 <dd><p>numeric; number of total cells for this simulation</p></dd>
 <dt>total_read_counts</dt>
 <dd><p>numeric; sets the total read count value for each sample</p></dd>
+<dt>remove_bias_in_counts</dt>
+<dd><p>boolean; if TRUE (default) the internal mRNA bias that is present in count data will be <em>removed</em> using the number of reads mapped to each cell</p></dd>
+<dt>remove_bias_in_counts_method</dt>
+<dd><p>'read-number' (default) or 'gene-number'; method with which the mRNA bias in counts will be removed</p></dd>
+<dt>norm_counts</dt>
+<dd><p>boolean; if TRUE (default) the samples simulated with counts will be normalized to CPMs</p></dd>
 <dt>ncores</dt>
 <dd><p>numeric; number of cores used to create simulation</p></dd>
 </dl></div>

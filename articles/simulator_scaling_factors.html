@@ -210,26 +210,25 @@ The scaling factors will always be applied on the single-cell dataset first, alt
 <div class="section level4">
 <h4 id="reads-and-genes">Reads and genes<a class="anchor" aria-label="anchor" href="#reads-and-genes"></a>
 </h4>
-<p>Two straight forward approaches would be the number of reads or number of expressed genes/features. For this, we need to generate our initial dataset a little bit differently and add more information to the internal annotation table:</p>
+<p>Two straight forward approaches would be the number of reads or number of expressed genes/features. As these values are easily obtainable from the provided count data, SimBu already calculates them during dataset generation.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R">  <span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
-                count_matrix <span class="op">=</span> <span class="va">count_matrix</span>,
-                name <span class="op">=</span> <span class="st">"reads_and_genes"</span>,
-                read_number_col <span class="op">=</span> <span class="st">"total_reads"</span>,      <span class="co"># add read number column</span>
-                additional_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"gene_number"</span><span class="op">)</span><span class="op">)</span>   <span class="co"># add gene number column</span></code></pre></div>
+<code class="sourceCode R"><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
+                     count_matrix <span class="op">=</span> <span class="va">counts</span>,
+                     tpm_matrix <span class="op">=</span> <span class="va">tpm</span>,
+                     name <span class="op">=</span> <span class="st">"test_dataset"</span><span class="op">)</span></code></pre></div>
 <p>Here our <code>annotation</code> dataframe contains additional columns such as <code>total_reads</code> and <code>gene_number</code>. The first gives the number of reads per cell, the other the number of expressed genes per cell. The number of reads will be stored in the dataset annotation in the <code>read_number</code> column, all columns we add via the <code>additional_cols</code> parameter will keep their original name. We can now use these values for mRNA bias introduction based on reads or genes:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
 <span class="va">sim_reads</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">ds</span>, 
                            scenario <span class="op">=</span> <span class="st">"random"</span>, 
-                           scaling_factor<span class="op">=</span><span class="st">"read-number"</span>,  <span class="co"># use number of reads as scaling factor</span>
+                           scaling_factor<span class="op">=</span><span class="st">"read_number"</span>,  <span class="co"># use number of reads as scaling factor</span>
                            nsamples <span class="op">=</span> <span class="fl">100</span>, 
                            ncells<span class="op">=</span><span class="fl">1000</span>, 
                            ncores<span class="op">=</span><span class="fl">4</span><span class="op">)</span>
 
 <span class="va">sim_genes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds</span>,
                            scenario <span class="op">=</span> <span class="st">"random"</span>,
-                           scaling_factor <span class="op">=</span> <span class="st">"gene_number"</span>, <span class="co"># use gene_number column as scaling factor</span>
+                           scaling_factor <span class="op">=</span> <span class="st">"expressed_genes"</span>, <span class="co"># use number of expressed genes column as scaling factor</span>
                            nsamples <span class="op">=</span> <span class="fl">100</span>,
                            ncells <span class="op">=</span> <span class="fl">1000</span>,
                            ncores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></code></pre></div>
@@ -243,13 +242,12 @@ The scaling factors will always be applied on the single-cell dataset first, alt
 <code class="sourceCode R">  <span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
                 count_matrix <span class="op">=</span> <span class="va">count_matrix</span>,
                 name <span class="op">=</span> <span class="st">"spike-ins"</span>,
-                spike_in_col <span class="op">=</span> <span class="st">"ercc_sum"</span>,   <span class="co"># add spike-in column</span>
-                read_number_col <span class="op">=</span> <span class="st">"total_reads"</span><span class="op">)</span></code></pre></div>
+                spike_in_col <span class="op">=</span> <span class="st">"ercc_sum"</span><span class="op">)</span>   <span class="co"># add spike-in column</span></code></pre></div>
 <p>The scaling factor with spike-ins is calculated as the “% of reads NOT mapped to spike-in reads,” or: <code>(n_reads - n_spike_in)/n_reads</code> for each cell. We apply it like this:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sim_spike</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds</span>,
                            scenario <span class="op">=</span> <span class="st">"random"</span>,
-                           scaling_factor <span class="op">=</span> <span class="st">"spike-in"</span>, <span class="co"># use spike-in scaling factor</span>
+                           scaling_factor <span class="op">=</span> <span class="st">"spike_in"</span>, <span class="co"># use spike-in scaling factor</span>
                            nsamples <span class="op">=</span> <span class="fl">100</span>,
                            ncells <span class="op">=</span> <span class="fl">1000</span>,
                            ncores <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></code></pre></div>
@@ -262,7 +260,7 @@ The scaling factors will always be applied on the single-cell dataset first, alt
 Census calculates a vector with a scaling value for each cell in a sample. You can switch this feature on, by setting the <code>scaling_factor</code> parameter to <code>census</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sim_census</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">dataset_file</span>,
-                             scenario <span class="op">=</span> <span class="st">"spike-in"</span>, 
+                             scenario <span class="op">=</span> <span class="st">"random"</span>, 
                              scaling_factor <span class="op">=</span> <span class="st">"census"</span>,   <span class="co"># use census scaling factor</span>
                              nsamples <span class="op">=</span> <span class="fl">100</span>, 
                              ncells<span class="op">=</span><span class="fl">1000</span>, 

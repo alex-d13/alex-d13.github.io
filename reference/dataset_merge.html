@@ -67,7 +67,6 @@
   <span class="va">dataset_list</span>,
   name <span class="op">=</span> <span class="st">"SimBu_dataset"</span>,
   spike_in_col <span class="op">=</span> <span class="cn">NULL</span>,
-  read_number_col <span class="op">=</span> <span class="cn">NULL</span>,
   additional_cols <span class="op">=</span> <span class="cn">NULL</span>,
   filter_genes <span class="op">=</span> <span class="cn">T</span>,
   variance_cutoff <span class="op">=</span> <span class="fl">0</span>,
@@ -79,13 +78,11 @@
     <div id="arguments">
     <h2>Arguments</h2>
     <dl><dt>dataset_list</dt>
-<dd><p>list of <a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a> objects</p></dd>
+<dd><p>(mandatory) list of <a href="https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a> objects</p></dd>
 <dt>name</dt>
 <dd><p>name of the new dataset</p></dd>
 <dt>spike_in_col</dt>
-<dd><p>which column in annotation contains information on spike-in counts, which can be used to re-scale counts; mandatory for spike-in scaling factor in simulation</p></dd>
-<dt>read_number_col</dt>
-<dd><p>which column in annotation contains information on total read numbers in a cell; mandatory for "spike-in" scaling factor and "read-number" in simulation</p></dd>
+<dd><p>which column in annotation contains information on spike_in counts, which can be used to re-scale counts; mandatory for spike_in scaling factor in simulation</p></dd>
 <dt>additional_cols</dt>
 <dd><p>list of column names in annotation, that should be stored as well in dataset object</p></dd>
 <dt>filter_genes</dt>

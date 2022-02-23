@@ -64,12 +64,13 @@
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">dataset_seurat</span><span class="op">(</span>
-  <span class="va">annotation</span>,
-  <span class="va">seurat_obj_counts</span>,
-  seurat_obj_tpm <span class="op">=</span> <span class="cn">NULL</span>,
+  <span class="va">seurat_obj</span>,
+  <span class="va">count_assay</span>,
+  <span class="va">cell_id_col</span>,
+  <span class="va">cell_type_col</span>,
+  tpm_assay <span class="op">=</span> <span class="cn">NULL</span>,
   name <span class="op">=</span> <span class="st">"SimBu_dataset"</span>,
   spike_in_col <span class="op">=</span> <span class="cn">NULL</span>,
-  read_number_col <span class="op">=</span> <span class="cn">NULL</span>,
   additional_cols <span class="op">=</span> <span class="cn">NULL</span>,
   filter_genes <span class="op">=</span> <span class="cn">T</span>,
   variance_cutoff <span class="op">=</span> <span class="fl">0</span>,
@@ -80,18 +81,20 @@
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>annotation</dt>
-<dd><p>dataframe; needs columns 'ID' and 'cell_type'; 'ID' needs to be equal with cell_names in count_matrix</p></dd>
-<dt>seurat_obj_counts</dt>
-<dd><p><a href="https://satijalab.org/seurat/reference/Seurat-package.html" class="external-link">Seurat</a> object with raw counts</p></dd>
-<dt>seurat_obj_tpm</dt>
-<dd><p><a href="https://satijalab.org/seurat/reference/Seurat-package.html" class="external-link">Seurat</a> object with TPM counts</p></dd>
+    <dl><dt>seurat_obj</dt>
+<dd><p>(mandatory) <a href="https://satijalab.org/seurat/reference/Seurat-package.html" class="external-link">Seurat</a> object with TPM counts</p></dd>
+<dt>count_assay</dt>
+<dd><p>(mandatory) name of assay in Seurat object which contains count data in 'counts' slot</p></dd>
+<dt>cell_id_col</dt>
+<dd><p>(mandatory) name of column in Seurat meta.data with unique cell ids</p></dd>
+<dt>cell_type_col</dt>
+<dd><p>(mandatory) name of column in Seurat meta.data with cell type name</p></dd>
+<dt>tpm_assay</dt>
+<dd><p>name of assay in Seurat object which contains TPM data in 'counts' slot</p></dd>
 <dt>name</dt>
 <dd><p>name of the dataset; will be used for new unique IDs of cells</p></dd>
 <dt>spike_in_col</dt>
-<dd><p>which column in annotation contains information on spike-in counts, which can be used to re-scale counts; mandatory for spike-in scaling factor in simulation</p></dd>
-<dt>read_number_col</dt>
-<dd><p>which column in annotation contains information on total read numbers in a cell; mandatory for "spike-in" scaling factor and "read-number" in simulation</p></dd>
+<dd><p>which column in annotation contains information on spike_in counts, which can be used to re-scale counts; mandatory for spike_in scaling factor in simulation</p></dd>
 <dt>additional_cols</dt>
 <dd><p>list of column names in annotation, that should be stored as well in dataset object</p></dd>
 <dt>filter_genes</dt>
