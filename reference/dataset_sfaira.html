@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -44,6 +44,9 @@
       <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
     </li>
   </ul></li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -69,11 +72,11 @@
   <span class="va">name</span>,
   spike_in_col <span class="op">=</span> <span class="cn">NULL</span>,
   additional_cols <span class="op">=</span> <span class="cn">NULL</span>,
-  force <span class="op">=</span> <span class="cn">F</span>,
-  filter_genes <span class="op">=</span> <span class="cn">T</span>,
+  force <span class="op">=</span> <span class="cn">FALSE</span>,
+  filter_genes <span class="op">=</span> <span class="cn">TRUE</span>,
   variance_cutoff <span class="op">=</span> <span class="fl">0</span>,
   type_abundance_cutoff <span class="op">=</span> <span class="fl">0</span>,
-  scale_tpm <span class="op">=</span> <span class="cn">T</span>
+  scale_tpm <span class="op">=</span> <span class="cn">TRUE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -105,6 +108,15 @@
     <p>dataset object</p>
     </div>
 
+    <div id="ref-examples">
+    <h2>Examples</h2>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
+<span class="r-in"><span class="va">ds_miller</span> <span class="op">&lt;-</span> <span class="fu">dataset_sfaira</span><span class="op">(</span>sfaira_id<span class="op">=</span><span class="st">"human_lung_2020_10x3v2_miller_001_10.1016/j.devcel.2020.01.033"</span>,</span>
+<span class="r-in">                            sfaira_setup <span class="op">=</span> <span class="va">setup_list</span>,name <span class="op">=</span> <span class="st">"Miller"</span><span class="op">)</span></span>
+<span class="r-in"><span class="op">}</span></span>
+<span class="r-in"></span>
+</code></pre></div>
+    </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top"><h2 data-toc-skip>Contents</h2>

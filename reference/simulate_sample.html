@@ -28,7 +28,7 @@ Note: if total_read_counts is used, the cell-fractions are applied to the number
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -46,6 +46,9 @@ Note: if total_read_counts is used, the cell-fractions are applied to the number
       <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
     </li>
   </ul></li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -75,8 +78,7 @@ Note: if total_read_counts is used, the cell-fractions are applied to the number
   <span class="va">total_read_counts</span>,
   <span class="va">remove_bias_in_counts</span>,
   <span class="va">remove_bias_in_counts_method</span>,
-  <span class="va">norm_counts</span>,
-  <span class="va">ncores</span>
+  <span class="va">norm_counts</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -98,8 +100,6 @@ Note: if total_read_counts is used, the cell-fractions are applied to the number
 <dd><p>'read-number' (default) or 'gene-number'; method with which the mRNA bias in counts will be removed</p></dd>
 <dt>norm_counts</dt>
 <dd><p>boolean; if TRUE (default) the samples simulated with counts will be normalized to CPMs</p></dd>
-<dt>ncores</dt>
-<dd><p>numeric; number of cores used to create simulation</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

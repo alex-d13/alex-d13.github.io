@@ -26,7 +26,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -44,6 +44,9 @@
       <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
     </li>
   </ul></li>
+<li>
+  <a href="../news/index.html">Changelog</a>
+</li>
       </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
@@ -68,7 +71,8 @@
   <span class="va">scaling_factor</span>,
   <span class="va">custom_scaling_vector</span>,
   <span class="va">scaling_factor_single_cell</span>,
-  <span class="va">ncores</span>
+  <span class="va">BPPARAM</span>,
+  <span class="va">run_parallel</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -80,8 +84,12 @@
 <dd><p>name of scaling factor; possible are: <code>census</code>, <code>spike_in</code>, <code>read_number</code>, <code>custom</code> or <code>NONE</code> for no scaling factor</p></dd>
 <dt>custom_scaling_vector</dt>
 <dd><p>named vector with custom scaling values for cell-types. Cell-types that do not occur in this vector but are present in the dataset will be set to 1</p></dd>
-<dt>ncores</dt>
-<dd><p>number of cores</p></dd>
+<dt>scaling_factor_single_cell</dt>
+<dd><p>boolean: decide if a scaling value for each single cell is calculated (default) or the median of all scaling values for each cell type is calculated</p></dd>
+<dt>BPPARAM</dt>
+<dd><p>BiocParallel::bpparam() by default; if specific number of threads x want to be used, insert: BiocParallel::MulticoreParam(workers = x)</p></dd>
+<dt>run_parallel</dt>
+<dd><p>boolean, decide if multi-threaded calculation will be run. FALSE by default</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

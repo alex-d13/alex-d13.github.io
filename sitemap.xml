@@ -10,6 +10,9 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
+    <loc>/TODO.html</loc>
+  </url>
+  <url>
     <loc>/articles/index.html</loc>
   </url>
   <url>
@@ -31,16 +34,25 @@
     <loc>/index.html</loc>
   </url>
   <url>
+    <loc>/news/index.html</loc>
+  </url>
+  <url>
     <loc>/reference/calc_scaling_vector.html</loc>
   </url>
   <url>
     <loc>/reference/census.html</loc>
   </url>
   <url>
+    <loc>/reference/census_monocle.html</loc>
+  </url>
+  <url>
     <loc>/reference/check_annotation.html</loc>
   </url>
   <url>
     <loc>/reference/check_if_tpm.html</loc>
+  </url>
+  <url>
+    <loc>/reference/compare_matrix_with_annotation.html</loc>
   </url>
   <url>
     <loc>/reference/dataset.html</loc>
@@ -61,10 +73,16 @@
     <loc>/reference/dataset_sfaira_multiple.html</loc>
   </url>
   <url>
+    <loc>/reference/dmode.html</loc>
+  </url>
+  <url>
     <loc>/reference/download_sfaira.html</loc>
   </url>
   <url>
     <loc>/reference/download_sfaira_multiple.html</loc>
+  </url>
+  <url>
+    <loc>/reference/filter_matrix.html</loc>
   </url>
   <url>
     <loc>/reference/generate_summarized_experiment.html</loc>

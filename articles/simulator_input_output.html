@@ -43,7 +43,7 @@
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
@@ -62,6 +62,9 @@
       <a href="../articles/simulator_scaling_factors.html">Introducing mRNA bias into simulations with scaling factors</a>
     </li>
   </ul>
+</li>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <ul class="nav navbar-nav navbar-right"></ul>
@@ -88,14 +91,6 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">SimBu</span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://Matrix.R-forge.R-project.org/" class="external-link">Matrix</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://satijalab.org/seurat" class="external-link">Seurat</a></span><span class="op">)</span>
-<span class="co">#&gt; Registered S3 method overwritten by 'spatstat.geom':</span>
-<span class="co">#&gt;   method     from</span>
-<span class="co">#&gt;   print.boxx cli</span>
-<span class="co">#&gt; Attaching SeuratObject</span></code></pre></div>
 <p>This chapter covers the different input and output options of the package in detail.</p>
 <div class="section level2">
 <h2 id="input">Input<a class="anchor" aria-label="anchor" href="#input"></a>
@@ -108,28 +103,72 @@ Sfaira is not covered in this vignette, but in <a href="sfaira_vignette.Rmd">“
 <p>Using existing count matrices and annotations is already covered in the <a href="simulator_documentation.Rmd">“Getting started”</a> vignette; this section will explain some minor details.<br></p>
 <p>When generating a dataset with your own data, you need to provide the <code>count_matrix</code> parameter of <code><a href="../reference/dataset.html">dataset()</a></code>; additionally you can provide a TPM matrix with the <code>tpm_matrix</code>. This will then lead to two simulations, one based on counts and one based on TPMs. For either of them, genes are located in the rows, cells in the columns.<br>
 Additionally, an annotation table is needed, with the cell-type annotations. It needs to consist of at least out of 2 columns: <code>ID</code> and <code>cell_type</code>, where <code>ID</code> has to be identical to the column names of the provides matrix/matrices. If not all cells appear in the annotation or matrix, the intersection of both is used to generate the dataset.<br></p>
+<p>Here is some example data:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">counts</span> <span class="op">&lt;-</span> <span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/Matrix.html" class="external-link">Matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fl">3e5</span>, <span class="fl">5</span><span class="op">)</span>, ncol<span class="op">=</span><span class="fl">300</span><span class="op">)</span>, sparse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">tpm</span> <span class="op">&lt;-</span> <span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/Matrix.html" class="external-link">Matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fl">3e5</span>, <span class="fl">5</span><span class="op">)</span>, ncol<span class="op">=</span><span class="fl">300</span><span class="op">)</span>, sparse <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="va">tpm</span> <span class="op">&lt;-</span> <span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="fl">1e6</span><span class="op">*</span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu">t</span><span class="op">(</span><span class="va">tpm</span><span class="op">)</span><span class="op">/</span><span class="fu">Matrix</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Matrix/man/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="va">tpm</span><span class="op">)</span><span class="op">)</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"cell-"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">tpm</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"cell-"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"gene-"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tpm</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"gene-"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">annotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">"ID"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"cell-"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">)</span>, 
+                         <span class="st">"cell_type"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"T cells CD4"</span>,<span class="fl">50</span><span class="op">)</span>, 
+                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"T cells CD8"</span>,<span class="fl">50</span><span class="op">)</span>,
+                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Macrophages"</span>,<span class="fl">100</span><span class="op">)</span>,
+                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"NK cells"</span>,<span class="fl">10</span><span class="op">)</span>,
+                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"B cells"</span>,<span class="fl">70</span><span class="op">)</span>,
+                                       <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Monocytes"</span>,<span class="fl">20</span><span class="op">)</span><span class="op">)</span>,
+                         row.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"cell-"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">seurat_obj</span> <span class="op">&lt;-</span> <span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://mojaveazure.github.io/seurat-object/reference/CreateSeuratObject.html" class="external-link">CreateSeuratObject</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">counts</span>, assay <span class="op">=</span> <span class="st">'counts'</span>, meta.data <span class="op">=</span> <span class="va">annotation</span><span class="op">)</span>
+<span class="co">#&gt; Registered S3 method overwritten by 'spatstat.geom':</span>
+<span class="co">#&gt;   method     from</span>
+<span class="co">#&gt;   print.boxx cli</span>
+<span class="va">tpm_assay</span> <span class="op">&lt;-</span> <span class="fu">Seurat</span><span class="fu">::</span><span class="fu"><a href="https://mojaveazure.github.io/seurat-object/reference/CreateAssayObject.html" class="external-link">CreateAssayObject</a></span><span class="op">(</span>counts <span class="op">=</span> <span class="va">tpm</span><span class="op">)</span>
+<span class="va">seurat_obj</span><span class="op">[[</span><span class="st">'tpm'</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">tpm_assay</span>
+
+<span class="va">seurat_obj</span>
+<span class="co">#&gt; An object of class Seurat </span>
+<span class="co">#&gt; 2000 features across 300 samples within 2 assays </span>
+<span class="co">#&gt; Active assay: counts (1000 features, 0 variable features)</span>
+<span class="co">#&gt;  1 other assay present: tpm</span></code></pre></div>
 <div class="section level4">
 <h4 id="seurat">Seurat<a class="anchor" aria-label="anchor" href="#seurat"></a>
 </h4>
 <p>It is possible to use a Seurat object to build a dataset; give the name of the assay containing count data in the <code>counts</code> slot, the name of the column in the meta table with the unique cell IDs and the name of the column in the meta table with the cell type identifier. Additionally you may give the name of the assay containing TPM data in the <code>counts</code> slot.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ds_seurat</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_seurat.html">dataset_seurat</a></span><span class="op">(</span>seurat_obj <span class="op">=</span> <span class="va">seurat_obj</span>, 
-                                   count_assay <span class="op">=</span> <span class="st">"RNA"</span>, 
-                                   cell_id_col <span class="op">=</span> <span class="st">'orig.ident'</span>, 
-                                   cell_type_col <span class="op">=</span> <span class="st">'ct'</span>, 
-                                   tpm_assay <span class="op">=</span> <span class="st">'TPM'</span>,
-                                   name <span class="op">=</span> <span class="st">"seurat_dataset"</span><span class="op">)</span></code></pre></div>
+                                   count_assay <span class="op">=</span> <span class="st">"counts"</span>, 
+                                   cell_id_col <span class="op">=</span> <span class="st">'ID'</span>, 
+                                   cell_type_col <span class="op">=</span> <span class="st">'cell_type'</span>, 
+                                   tpm_assay <span class="op">=</span> <span class="st">'tpm'</span>,
+                                   name <span class="op">=</span> <span class="st">"seurat_dataset"</span><span class="op">)</span>
+<span class="co">#&gt; Filtering genes...</span>
+<span class="co">#&gt; Created dataset.</span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="h5ad-files">h5ad files<a class="anchor" aria-label="anchor" href="#h5ad-files"></a>
 </h4>
-<p>It is possible to use an h5ad file directly, a file format which stores <a href="https://anndata.readthedocs.io/en/latest/" class="external-link">AnnData</a> objects; again you need an additional dataframe for the annotation:</p>
+<p>It is possible to use an h5ad file directly, a file format which stores <a href="https://anndata.readthedocs.io/en/latest/" class="external-link">AnnData</a> objects. As h5ad files can store cell specific information in the <code>var</code> layer, no additional annotation input for SimBu is needed.<br>
+Note: if you want both counts and tpm data as input, you will have to provide two files; the annotation layer <code>var</code> has to match between these files, otherwise the intersection will be used. You can provide the column names in <code>var</code> which store cell id and cell type with the <code>cell_id_col</code> and <code>cell_type_col</code> parameters respectively.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
-<span class="va">ds_h5ad</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_h5ad.html">dataset_h5ad</a></span><span class="op">(</span>h5ad_file_counts <span class="op">=</span> <span class="va">h5ad_file_counts</span>,
-                               h5ad_file_tpm <span class="op">=</span> <span class="va">h5ad_file_tpm</span>,
-                               annotation <span class="op">=</span> <span class="va">annotation</span>,
-                               name <span class="op">=</span> <span class="st">"h5ad_dataset"</span><span class="op">)</span></code></pre></div>
+<span class="va">ad</span> <span class="op">&lt;-</span> <span class="fu">anndata</span><span class="fu">::</span><span class="fu"><a href="https://anndata.dynverse.org/reference/AnnData.html" class="external-link">AnnData</a></span><span class="op">(</span>X<span class="op">=</span><span class="va">counts</span>, 
+                       obs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>genes<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span>, row.names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">counts</span><span class="op">)</span><span class="op">)</span>, <span class="co"># obs stores gene information</span>
+                       var <span class="op">=</span> <span class="va">annotation</span><span class="op">)</span>                                                     <span class="co"># var stores cell information</span>
+<span class="va">counts_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>pattern <span class="op">=</span> <span class="st">'test'</span>,fileext <span class="op">=</span> <span class="st">'.h5ad'</span><span class="op">)</span>
+<span class="fu">anndata</span><span class="fu">::</span><span class="fu"><a href="https://anndata.dynverse.org/reference/write_h5ad.html" class="external-link">write_h5ad</a></span><span class="op">(</span>anndata <span class="op">=</span> <span class="va">ad</span>, filename <span class="op">=</span> <span class="va">counts_file</span><span class="op">)</span>
+
+
+<span class="va">ds_h5ad</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_h5ad.html">dataset_h5ad</a></span><span class="op">(</span>h5ad_file_counts <span class="op">=</span> <span class="va">counts_file</span>,
+                               name <span class="op">=</span> <span class="st">"h5ad_dataset"</span>,
+                               cell_id_col <span class="op">=</span> <span class="st">'ID'</span>, 
+                               cell_type_col <span class="op">=</span> <span class="st">'cell_type'</span><span class="op">)</span>
+<span class="co">#&gt; Filtering genes...</span>
+<span class="co">#&gt; Created dataset.</span></code></pre></div>
 </div>
 </div>
 <div class="section level3">
@@ -138,17 +177,18 @@ Additionally, an annotation table is needed, with the cell-type annotations. It 
 <p>You are able to merge multiple datasets by using the <code>dataset_merge</code> function:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
-<span class="va">ds_multiple</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_merge.html">dataset_merge</a></span><span class="op">(</span>dataset_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">ds_1</span>, <span class="va">ds_2</span>, <span class="va">ds_3</span><span class="op">)</span>,
-                                    name <span class="op">=</span> <span class="st">"ds_multiple"</span><span class="op">)</span></code></pre></div>
+<span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
+                     count_matrix <span class="op">=</span> <span class="va">counts</span>,
+                     tpm_matrix <span class="op">=</span> <span class="va">tpm</span>,
+                     name <span class="op">=</span> <span class="st">"test_dataset"</span><span class="op">)</span>
+<span class="co">#&gt; Filtering genes...</span>
+<span class="co">#&gt; Created dataset.</span>
+
+<span class="va">ds_multiple</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset_merge.html">dataset_merge</a></span><span class="op">(</span>dataset_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">ds_seurat</span>, <span class="va">ds</span><span class="op">)</span>,
+                                    name <span class="op">=</span> <span class="st">"ds_multiple"</span><span class="op">)</span>
+<span class="co">#&gt; Filtering genes...</span>
+<span class="co">#&gt; Created dataset.</span></code></pre></div>
 </div>
-</div>
-<div class="section level2">
-<h2 id="simulations">Simulations<a class="anchor" aria-label="anchor" href="#simulations"></a>
-</h2>
-<p>Once a dataset is generated, you can use <code>simulate_bulk</code> to generate pseudo-bulk samples, resulting in an artificial RNA-seq dataset.<br>
-Similar to datasets, it is also possible to merge simulations:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">merged_simulations</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/merge_simulations.html">merge_simulations</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="va">sim_1</span>, <span class="va">sim_2</span>, <span class="va">sim_3</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="output">Output<a class="anchor" aria-label="anchor" href="#output"></a>
@@ -158,14 +198,117 @@ Similar to datasets, it is also possible to merge simulations:</p>
 <li>
 <code>bulk</code>: a SummarizedExperiment object with the pseudo-bulk dataset(s) stored in the <code>assays</code>. They can be accessed like this:</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">assays</span><span class="op">(</span><span class="va">simulation</span><span class="op">$</span><span class="va">bulk</span><span class="op">)</span><span class="op">[[</span><span class="st">"bulk_counts"</span><span class="op">]</span><span class="op">]</span>
-<span class="fu">assays</span><span class="op">(</span><span class="va">simulation</span><span class="op">$</span><span class="va">bulk</span><span class="op">)</span><span class="op">[[</span><span class="st">"bulk_tpm"</span><span class="op">]</span><span class="op">]</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">simulation</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds_multiple</span>,
+                                   scenario <span class="op">=</span> <span class="st">"random"</span>, 
+                                   scaling_factor <span class="op">=</span> <span class="st">"NONE"</span>,
+                                   nsamples <span class="op">=</span> <span class="fl">10</span>, ncells <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
+<span class="co">#&gt; Finished simulation.</span>
+
+<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">simulation</span><span class="op">$</span><span class="va">bulk</span><span class="op">)</span><span class="op">[[</span><span class="st">"bulk_counts"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="co">#&gt; [1] 1000   10</span>
+<span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu">SummarizedExperiment</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assays</a></span><span class="op">(</span><span class="va">simulation</span><span class="op">$</span><span class="va">bulk</span><span class="op">)</span><span class="op">[[</span><span class="st">"bulk_tpm"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span>
+<span class="co">#&gt; [1] 1000   10</span></code></pre></div>
 <p>If only the count matrix was given to the dataset initially, only the <code>bulk_counts</code> assay is filled.</p>
 <ul>
 <li><p><code>cell_fractions</code>: a table where rows represent the simulated samples and columns represent the different simulated cell-types. The entries in the table store the specific cell-type fraction per sample.<br></p></li>
 <li><p><code>scaling_vector</code>: a named list, with the used scaling value for each cell from the single cell dataset.<br></p></li>
 </ul>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
+<span class="co">#&gt; R version 4.1.0 (2021-05-18)</span>
+<span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
+<span class="co">#&gt; Running under: Ubuntu 18.04.6 LTS</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Matrix products: default</span>
+<span class="co">#&gt; BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.7.1</span>
+<span class="co">#&gt; LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.7.1</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; locale:</span>
+<span class="co">#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span>
+<span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span>
+<span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span>
+<span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span>
+<span class="co">#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span>
+<span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; attached base packages:</span>
+<span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; loaded via a namespace (and not attached):</span>
+<span class="co">#&gt;   [1] systemfonts_1.0.4           plyr_1.8.6                 </span>
+<span class="co">#&gt;   [3] igraph_1.2.11               lazyeval_0.2.2             </span>
+<span class="co">#&gt;   [5] proxyC_0.2.4                splines_4.1.0              </span>
+<span class="co">#&gt;   [7] BiocParallel_1.26.2         listenv_0.8.0              </span>
+<span class="co">#&gt;   [9] scattermore_0.8             GenomeInfoDb_1.28.4        </span>
+<span class="co">#&gt;  [11] ggplot2_3.3.5               digest_0.6.27              </span>
+<span class="co">#&gt;  [13] htmltools_0.5.2             fansi_1.0.2                </span>
+<span class="co">#&gt;  [15] magrittr_2.0.1              memoise_2.0.1              </span>
+<span class="co">#&gt;  [17] tensor_1.5                  cluster_2.1.2              </span>
+<span class="co">#&gt;  [19] ROCR_1.0-11                 globals_0.14.0             </span>
+<span class="co">#&gt;  [21] RcppParallel_5.1.5          matrixStats_0.61.0         </span>
+<span class="co">#&gt;  [23] pkgdown_2.0.2               spatstat.sparse_2.1-0      </span>
+<span class="co">#&gt;  [25] colorspace_2.0-3            rappdirs_0.3.3             </span>
+<span class="co">#&gt;  [27] ggrepel_0.9.1               textshaping_0.3.6          </span>
+<span class="co">#&gt;  [29] xfun_0.30                   dplyr_1.0.8                </span>
+<span class="co">#&gt;  [31] crayon_1.5.0                RCurl_1.98-1.6             </span>
+<span class="co">#&gt;  [33] jsonlite_1.7.2              spatstat.data_2.1-2        </span>
+<span class="co">#&gt;  [35] survival_3.2-11             zoo_1.8-9                  </span>
+<span class="co">#&gt;  [37] glue_1.6.2                  polyclip_1.10-0            </span>
+<span class="co">#&gt;  [39] gtable_0.3.0                zlibbioc_1.38.0            </span>
+<span class="co">#&gt;  [41] XVector_0.32.0              SimBu_0.1.0                </span>
+<span class="co">#&gt;  [43] leiden_0.3.9                DelayedArray_0.18.0        </span>
+<span class="co">#&gt;  [45] future.apply_1.8.1          BiocGenerics_0.38.0        </span>
+<span class="co">#&gt;  [47] abind_1.4-5                 scales_1.1.1               </span>
+<span class="co">#&gt;  [49] DBI_1.1.2                   miniUI_0.1.1.1             </span>
+<span class="co">#&gt;  [51] Rcpp_1.0.8                  viridisLite_0.4.0          </span>
+<span class="co">#&gt;  [53] xtable_1.8-4                reticulate_1.24            </span>
+<span class="co">#&gt;  [55] spatstat.core_2.3-2         stats4_4.1.0               </span>
+<span class="co">#&gt;  [57] htmlwidgets_1.5.4           httr_1.4.2                 </span>
+<span class="co">#&gt;  [59] anndata_0.7.5.3             RColorBrewer_1.1-2         </span>
+<span class="co">#&gt;  [61] ellipsis_0.3.2              Seurat_4.1.0               </span>
+<span class="co">#&gt;  [63] ica_1.0-2                   pkgconfig_2.0.3            </span>
+<span class="co">#&gt;  [65] sass_0.4.0                  uwot_0.1.11                </span>
+<span class="co">#&gt;  [67] deldir_1.0-6                here_1.0.1                 </span>
+<span class="co">#&gt;  [69] utf8_1.2.2                  tidyselect_1.1.2           </span>
+<span class="co">#&gt;  [71] rlang_1.0.2                 reshape2_1.4.4             </span>
+<span class="co">#&gt;  [73] later_1.3.0                 munsell_0.5.0              </span>
+<span class="co">#&gt;  [75] tools_4.1.0                 cachem_1.0.6               </span>
+<span class="co">#&gt;  [77] cli_3.1.1                   generics_0.1.2             </span>
+<span class="co">#&gt;  [79] ggridges_0.5.3              evaluate_0.14              </span>
+<span class="co">#&gt;  [81] stringr_1.4.0               fastmap_1.1.0              </span>
+<span class="co">#&gt;  [83] yaml_2.2.1                  ragg_1.2.2                 </span>
+<span class="co">#&gt;  [85] goftest_1.2-3               knitr_1.33                 </span>
+<span class="co">#&gt;  [87] fs_1.5.2                    fitdistrplus_1.1-6         </span>
+<span class="co">#&gt;  [89] purrr_0.3.4                 RANN_2.6.1                 </span>
+<span class="co">#&gt;  [91] pbapply_1.5-0               future_1.24.0              </span>
+<span class="co">#&gt;  [93] nlme_3.1-152                sparseMatrixStats_1.4.2    </span>
+<span class="co">#&gt;  [95] mime_0.10                   compiler_4.1.0             </span>
+<span class="co">#&gt;  [97] rstudioapi_0.13             plotly_4.10.0              </span>
+<span class="co">#&gt;  [99] png_0.1-7                   spatstat.utils_2.3-0       </span>
+<span class="co">#&gt; [101] tibble_3.1.6                bslib_0.3.1                </span>
+<span class="co">#&gt; [103] stringi_1.6.1               desc_1.4.1                 </span>
+<span class="co">#&gt; [105] lattice_0.20-44             Matrix_1.3-4               </span>
+<span class="co">#&gt; [107] vctrs_0.3.8                 pillar_1.7.0               </span>
+<span class="co">#&gt; [109] lifecycle_1.0.1             spatstat.geom_2.3-1        </span>
+<span class="co">#&gt; [111] lmtest_0.9-39               jquerylib_0.1.4            </span>
+<span class="co">#&gt; [113] RcppAnnoy_0.0.19            bitops_1.0-7               </span>
+<span class="co">#&gt; [115] data.table_1.14.2           cowplot_1.1.1              </span>
+<span class="co">#&gt; [117] irlba_2.3.5                 GenomicRanges_1.44.0       </span>
+<span class="co">#&gt; [119] httpuv_1.6.5                patchwork_1.1.1            </span>
+<span class="co">#&gt; [121] R6_2.5.1                    promises_1.2.0.1           </span>
+<span class="co">#&gt; [123] KernSmooth_2.23-20          gridExtra_2.3              </span>
+<span class="co">#&gt; [125] IRanges_2.26.0              parallelly_1.30.0          </span>
+<span class="co">#&gt; [127] codetools_0.2-18            MASS_7.3-54                </span>
+<span class="co">#&gt; [129] assertthat_0.2.1            SummarizedExperiment_1.22.0</span>
+<span class="co">#&gt; [131] rprojroot_2.0.2             SeuratObject_4.0.4         </span>
+<span class="co">#&gt; [133] sctransform_0.3.3           GenomeInfoDbData_1.2.6     </span>
+<span class="co">#&gt; [135] S4Vectors_0.30.2            mgcv_1.8-36                </span>
+<span class="co">#&gt; [137] parallel_4.1.0              grid_4.1.0                 </span>
+<span class="co">#&gt; [139] rpart_4.1-15                tidyr_1.2.0                </span>
+<span class="co">#&gt; [141] rmarkdown_2.12              MatrixGenerics_1.4.3       </span>
+<span class="co">#&gt; [143] Rtsne_0.15                  Biobase_2.52.0             </span>
+<span class="co">#&gt; [145] shiny_1.7.1</span></code></pre></div>
 </div>
   </div>
 
