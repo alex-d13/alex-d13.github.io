@@ -74,17 +74,17 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
   <span class="va">data</span>,
   scenario <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"even"</span>, <span class="st">"random"</span>, <span class="st">"mirror_db"</span>, <span class="st">"weighted"</span>, <span class="st">"pure"</span>, <span class="st">"custom"</span><span class="op">)</span>,
   scaling_factor <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"NONE"</span>, <span class="st">"census"</span>, <span class="st">"spike_in"</span>, <span class="st">"custom"</span>, <span class="st">"read_number"</span>,
-    <span class="st">"expressed_genes"</span>, <span class="st">"annotation_column"</span><span class="op">)</span>,
+    <span class="st">"expressed_genes"</span>, <span class="st">"annotation_column"</span>, <span class="st">"epic"</span>, <span class="st">"monaco"</span>, <span class="st">"quantiseq"</span><span class="op">)</span>,
   scaling_factor_single_cell <span class="op">=</span> <span class="cn">TRUE</span>,
   weighted_cell_type <span class="op">=</span> <span class="cn">NULL</span>,
   weighted_amount <span class="op">=</span> <span class="cn">NULL</span>,
   pure_cell_type <span class="op">=</span> <span class="cn">NULL</span>,
   custom_scenario_data <span class="op">=</span> <span class="cn">NULL</span>,
   custom_scaling_vector <span class="op">=</span> <span class="cn">NULL</span>,
-  balance_uniform_mirror_scenario <span class="op">=</span> <span class="fl">0.01</span>,
+  balance_even_mirror_scenario <span class="op">=</span> <span class="fl">0.01</span>,
   remove_bias_in_counts <span class="op">=</span> <span class="cn">TRUE</span>,
   remove_bias_in_counts_method <span class="op">=</span> <span class="st">"read-number"</span>,
-  norm_counts <span class="op">=</span> <span class="cn">TRUE</span>,
+  norm_counts <span class="op">=</span> <span class="cn">FALSE</span>,
   nsamples <span class="op">=</span> <span class="fl">100</span>,
   ncells <span class="op">=</span> <span class="fl">1000</span>,
   total_read_counts <span class="op">=</span> <span class="cn">NULL</span>,
@@ -102,7 +102,7 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
 <dt>scenario</dt>
 <dd><p>(mandatory) select on of the pre-defined cell-type fraction scenarios; possible are: <code>even</code>,<code>random</code>,<code>mirror_db</code>,<code>pure</code>,<code>weighted</code>; you can also use the <code>custom</code> scenario, where you need to set the <code>custom_scenario_data</code> parameter.</p></dd>
 <dt>scaling_factor</dt>
-<dd><p>(mandatory) name of scaling factor; possible are: <code>census</code>, <code>spike_in</code>, <code>read_number</code>, <code>expressed_genes</code>, <code>custom</code> or <code>NONE</code> for no scaling factor</p></dd>
+<dd><p>(mandatory) name of scaling factor; possible are: <code>census</code>, <code>spike_in</code>, <code>read_number</code>, <code>expressed_genes</code>, <code>custom</code>, <code>epic</code>, <code>monaco</code>, <code>quantiseq</code> or <code>NONE</code> for no scaling factor</p></dd>
 <dt>scaling_factor_single_cell</dt>
 <dd><p>boolean: decide if a scaling value for each single cell is calculated (default) or the median of all scaling values for each cell type is calculated</p></dd>
 <dt>weighted_cell_type</dt>
@@ -115,14 +115,14 @@ will be sampled for the simulation. Also a <code>scenario</code> has to be selec
 <dd><p>dataframe; needs to be of size <code>nsamples</code> x number_of_cell_types, where each sample is a row and each entry is the cell-type fraction. Rows need to sum up to 1.</p></dd>
 <dt>custom_scaling_vector</dt>
 <dd><p>named vector with custom scaling values for cell-types. Cell-types that do not occur in this vector but are present in the dataset will be set to 1; mandatory for <code>custom</code> scaling factor</p></dd>
-<dt>balance_uniform_mirror_scenario</dt>
+<dt>balance_even_mirror_scenario</dt>
 <dd><p>balancing value for the <code>uniform</code> and <code>mirror_db</code> scenarios: increasing it will result in more diverse simulated fractions. To get the same fractions in each sample, set to 0. Default is 0.01.</p></dd>
 <dt>remove_bias_in_counts</dt>
 <dd><p>boolean; if TRUE (default) the internal mRNA bias that is present in count data will be <em>removed</em> using the number of reads mapped to each cell</p></dd>
 <dt>remove_bias_in_counts_method</dt>
 <dd><p>'read-number' (default) or 'gene-number'; method with which the mRNA bias in counts will be removed</p></dd>
 <dt>norm_counts</dt>
-<dd><p>boolean; if TRUE (default) the samples simulated with counts will be normalized to CPMs</p></dd>
+<dd><p>boolean; if TRUE the samples simulated with counts will be normalized to CPMs, default is FALSE</p></dd>
 <dt>nsamples</dt>
 <dd><p>numeric; number of samples in pseudo-bulk RNAseq dataset (default = 100)</p></dd>
 <dt>ncells</dt>

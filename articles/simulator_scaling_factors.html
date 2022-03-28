@@ -109,7 +109,7 @@ The scaling factors will always be applied on the single-cell dataset first, alt
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tpm</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"gene_"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">1000</span><span class="op">)</span><span class="op">)</span>  
 
 <span class="va">annotation</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="st">"ID"</span><span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"cell_"</span>,<span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">300</span><span class="op">)</span><span class="op">)</span>,
-                           <span class="st">"cell_type"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"T cells CD4"</span>,<span class="fl">300</span><span class="op">)</span><span class="op">)</span>,
+                           <span class="st">"cell_type"</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"T cells CD4"</span>,<span class="fl">150</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"T cells CD8"</span>,<span class="fl">150</span><span class="op">)</span><span class="op">)</span>,
                            <span class="st">'spikes'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">300</span><span class="op">)</span>,
                            <span class="st">'add_1'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">300</span><span class="op">)</span>,
                            <span class="st">'add_2'</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">300</span><span class="op">)</span><span class="op">)</span>
@@ -206,29 +206,34 @@ The scaling factors will always be applied on the single-cell dataset first, alt
 <span class="co">#&gt; 9  T regulatory cells  72.55110</span>
 <span class="co">#&gt; 10    Dendritic cells 140.76091</span>
 <span class="co">#&gt; 11            T cells  68.89323</span></code></pre></div>
-<p>When you want to apply one of these scaling factors into your simulation (therefore in-/decreasing the expression signals for the cell-types), use the <code>custom</code> value for the <code>scaling_factor</code> parameter. Note, that the input for <code>custom_scaling_vector</code> needs to be a named list, so we need to transform the dataframes from above slightly:</p>
+<p>When you want to apply one of these scaling factors into your simulation (therefore in-/decreasing the expression signals for the cell-types), we can use the <code>scaling_factor</code> parameter. Note, that these pre-defined scaling factors only offer values for a certain number of cell types, and your annotation in the provided dataset has to match these names 1:1. All cell types from your dataset which are not present in this scaling factor remain unscaled and a warning message will appear.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">scaling_epic</span> <span class="op">&lt;-</span> <span class="va">epic</span><span class="op">$</span><span class="va">mRNA</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">scaling_epic</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">epic</span><span class="op">$</span><span class="va">type</span>
-<span class="va">sim_epic</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">ds</span>,
+<code class="sourceCode R"><span class="va">sim_epic</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">ds</span>,
                                  scenario <span class="op">=</span> <span class="st">"random"</span>,
-                                 scaling_factor<span class="op">=</span><span class="st">"custom"</span>, 
-                                 custom_scaling_vector <span class="op">=</span> <span class="va">scaling_epic</span>, 
+                                 scaling_factor<span class="op">=</span><span class="st">"epic"</span>,
                                  nsamples <span class="op">=</span> <span class="fl">10</span>, 
                                  ncells<span class="op">=</span><span class="fl">100</span>,
                                  BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,  
                                  run_parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; Using parallel generation of simulations.</span>
+<span class="co">#&gt; Using EPIC scaling factors.</span>
 <span class="co">#&gt; Finished simulation.</span></code></pre></div>
-<p>With this approach, we can also try out some custom scaling factors, for example increasing the expression levels for a single cell-type (B cells) by 10-fold compared to the rest. All cell-types which are not mentioned in the named list given to <code>custom_scaling_vector</code> will be transformed with a scaling factor of 1, meaning nothing changes for them.</p>
+<p>We can also try out some custom scaling factors, for example increasing the expression levels for a single cell-type (T cells CD8) by 10-fold compared to the rest. All cell-types which are not mentioned in the named list given to <code>custom_scaling_vector</code> will be transformed with a scaling factor of 1, meaning nothing changes for them.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sim_extreme_b</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds</span>, 
                                       scenario <span class="op">=</span> <span class="st">"random"</span>,
                                       scaling_factor <span class="op">=</span> <span class="st">"custom"</span>,
-                                      custom_scaling_vector <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"B cells"</span><span class="op">=</span><span class="fl">10</span><span class="op">)</span>, 
+                                      custom_scaling_vector <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"T cells CD8"</span><span class="op">=</span><span class="fl">10</span><span class="op">)</span>, 
                                       nsamples <span class="op">=</span> <span class="fl">10</span>, 
                                       ncells <span class="op">=</span> <span class="fl">100</span>, 
                                       BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,  
                                       run_parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; Using parallel generation of simulations.</span>
+<span class="co">#&gt; Using custom scaling factors.</span>
+<span class="co">#&gt; Warning in merge_scaling_factor(data = data, scaling_factor_values =</span>
+<span class="co">#&gt; custom_scaling_vector, : For some cell type(s) in the dataset, no scaling factor</span>
+<span class="co">#&gt; is available when using custom: T cells CD4. This cell type will not be re-</span>
+<span class="co">#&gt; scaled.</span>
 <span class="co">#&gt; Finished simulation.</span></code></pre></div>
 <p><strong>Important:</strong> Watch out that the cell-type annotation names in your dataset are the same as in the scaling factor! Otherwise the scaling factor will not be applied or even worse, applied to a different cell-type.</p>
 </div>
@@ -249,6 +254,7 @@ The scaling factors will always be applied on the single-cell dataset first, alt
                            ncells<span class="op">=</span><span class="fl">100</span>, 
                            BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,  
                            run_parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; Using parallel generation of simulations.</span>
 <span class="co">#&gt; Finished simulation.</span>
 
 <span class="va">sim_genes</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/simulate_bulk.html">simulate_bulk</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds</span>,
@@ -258,17 +264,18 @@ The scaling factors will always be applied on the single-cell dataset first, alt
                            ncells <span class="op">=</span> <span class="fl">100</span>,
                            BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,  
                            run_parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; Using parallel generation of simulations.</span>
 <span class="co">#&gt; Finished simulation.</span></code></pre></div>
 <p>These options would also allow you to use other numerical measurements you have for the single cells as scaling factors, such as weight or size for example. Lets pretend, <code>add_1</code> and <code>add_2</code> are such measurements. With the <code>additional_cols</code> parameter, they can be added to the SimBu dataset and we can use them as scaling factor as well:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">annotation</span><span class="op">)</span>
-<span class="co">#&gt;       ID   cell_type     spikes     add_1      add_2</span>
-<span class="co">#&gt; 1 cell_1 T cells CD4 0.06435398 0.2192866 0.44578206</span>
-<span class="co">#&gt; 2 cell_2 T cells CD4 0.19995423 0.1578088 0.91853122</span>
-<span class="co">#&gt; 3 cell_3 T cells CD4 0.17471801 0.9102668 0.06221524</span>
-<span class="co">#&gt; 4 cell_4 T cells CD4 0.99189341 0.7832121 0.83880273</span>
-<span class="co">#&gt; 5 cell_5 T cells CD4 0.52512830 0.5392334 0.90679748</span>
-<span class="co">#&gt; 6 cell_6 T cells CD4 0.05259319 0.9041495 0.91208817</span></code></pre></div>
+<span class="co">#&gt;       ID   cell_type     spikes     add_1     add_2</span>
+<span class="co">#&gt; 1 cell_1 T cells CD4 0.27460428 0.8923166 0.7000146</span>
+<span class="co">#&gt; 2 cell_2 T cells CD4 0.47591192 0.4509854 0.5415810</span>
+<span class="co">#&gt; 3 cell_3 T cells CD4 0.85557921 0.1154208 0.0487735</span>
+<span class="co">#&gt; 4 cell_4 T cells CD4 0.09087485 0.3591607 0.4751956</span>
+<span class="co">#&gt; 5 cell_5 T cells CD4 0.67930882 0.3259568 0.9708872</span>
+<span class="co">#&gt; 6 cell_6 T cells CD4 0.05290782 0.4540218 0.7581617</span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">SimBu</span><span class="fu">::</span><span class="fu"><a href="../reference/dataset.html">dataset</a></span><span class="op">(</span>annotation <span class="op">=</span> <span class="va">annotation</span>,
                      count_matrix <span class="op">=</span> <span class="va">counts</span>,
@@ -284,6 +291,7 @@ The scaling factors will always be applied on the single-cell dataset first, alt
                            ncells <span class="op">=</span> <span class="fl">100</span>,
                            BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,  
                            run_parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; Using parallel generation of simulations.</span>
 <span class="co">#&gt; Scaling by add_1-column in annotation table; if no scaling is wished instead, use 'NONE'.</span>
 <span class="co">#&gt; Finished simulation.</span></code></pre></div>
 </div>
@@ -328,6 +336,7 @@ Census calculates a vector with a scaling value for each cell in a sample. You c
                              ncells<span class="op">=</span><span class="fl">100</span>, 
                              BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/MulticoreParam-class.html" class="external-link">MulticoreParam</a></span><span class="op">(</span>workers <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,  
                              run_parallel <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="co">#&gt; Using parallel generation of simulations.</span>
 <span class="co">#&gt; Finished simulation.</span></code></pre></div>
 <p>In our analysis we found, that Census is basically a complicated way of estimating the number of expressed genes per cell. It will remain to the user to decide if he/she wants to use census or simply the number of expressed genes (as shown above) as scaling factor.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -352,7 +361,7 @@ Census calculates a vector with a scaling value for each cell in a sample. You c
 <span class="co">#&gt; [1] stats     graphics  grDevices utils     datasets  methods   base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;  [1] Rcpp_1.0.8                  XVector_0.32.0             </span>
+<span class="co">#&gt;  [1] Rcpp_1.0.8.3                XVector_0.32.0             </span>
 <span class="co">#&gt;  [3] GenomeInfoDb_1.28.4         bslib_0.3.1                </span>
 <span class="co">#&gt;  [5] compiler_4.1.0              jquerylib_0.1.4            </span>
 <span class="co">#&gt;  [7] zlibbioc_1.38.0             bitops_1.0-7               </span>
@@ -361,19 +370,19 @@ Census calculates a vector with a scaling value for each cell in a sample. You c
 <span class="co">#&gt; [13] jsonlite_1.7.2              evaluate_0.14              </span>
 <span class="co">#&gt; [15] memoise_2.0.1               lattice_0.20-44            </span>
 <span class="co">#&gt; [17] rlang_1.0.2                 Matrix_1.3-4               </span>
-<span class="co">#&gt; [19] DelayedArray_0.18.0         cli_3.1.1                  </span>
+<span class="co">#&gt; [19] DelayedArray_0.18.0         cli_3.2.0                  </span>
 <span class="co">#&gt; [21] rstudioapi_0.13             parallel_4.1.0             </span>
-<span class="co">#&gt; [23] yaml_2.2.1                  pkgdown_2.0.2              </span>
+<span class="co">#&gt; [23] yaml_2.3.5                  pkgdown_2.0.2              </span>
 <span class="co">#&gt; [25] xfun_0.30                   fastmap_1.1.0              </span>
 <span class="co">#&gt; [27] GenomeInfoDbData_1.2.6      stringr_1.4.0              </span>
 <span class="co">#&gt; [29] knitr_1.33                  IRanges_2.26.0             </span>
 <span class="co">#&gt; [31] S4Vectors_0.30.2            desc_1.4.1                 </span>
-<span class="co">#&gt; [33] fs_1.5.2                    sass_0.4.0                 </span>
+<span class="co">#&gt; [33] fs_1.5.2                    sass_0.4.1                 </span>
 <span class="co">#&gt; [35] systemfonts_1.0.4           stats4_4.1.0               </span>
 <span class="co">#&gt; [37] rprojroot_2.0.2             grid_4.1.0                 </span>
 <span class="co">#&gt; [39] Biobase_2.52.0              SimBu_0.1.0                </span>
 <span class="co">#&gt; [41] R6_2.5.1                    textshaping_0.3.6          </span>
-<span class="co">#&gt; [43] BiocParallel_1.26.2         rmarkdown_2.12             </span>
+<span class="co">#&gt; [43] BiocParallel_1.26.2         rmarkdown_2.13             </span>
 <span class="co">#&gt; [45] purrr_0.3.4                 magrittr_2.0.1             </span>
 <span class="co">#&gt; [47] GenomicRanges_1.44.0        BiocGenerics_0.38.0        </span>
 <span class="co">#&gt; [49] htmltools_0.5.2             matrixStats_0.61.0         </span>
